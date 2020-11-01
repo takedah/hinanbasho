@@ -1,3 +1,4 @@
+import os
 import psycopg2
 from psycopg2.extras import DictCursor
 
@@ -17,6 +18,9 @@ class DB:
         conn (:obj:`sqlite3.connect`): PostgreSQL接続クラス。
 
     """
+
+    DATABASE_URL = os.environ.get("HINANBASHO_DB_URL")
+    TEST_DATABASE_URL = os.environ.get("HINANBASHO_TEST_DB_URL")
 
     def __init__(self, dsn):
         """
