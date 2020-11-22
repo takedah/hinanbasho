@@ -1,4 +1,5 @@
 import unittest
+from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
 from hinanbasho.models import EvacuationSiteService
@@ -13,6 +14,14 @@ test_data = [
         "phone_number": "0166-23-8961",
         "latitude": 43.7748548,
         "longitude": 142.3578223,
+    },
+    {
+        "site_name": "花咲スポーツ公園",
+        "postal_code": "071-0901",
+        "address": "北海道旭川市花咲町1〜5丁目",
+        "phone_number": "0166-52-1934",
+        "latitude": 43.78850998,
+        "longitude": 142.3681739,
     },
 ]
 
@@ -66,6 +75,20 @@ class TestEvacuationSiteService(unittest.TestCase):
         for item in self.factory.items:
             self.assertTrue(self.service.create(item))
         self.db.commit()
+
+
+class TestCurrentLocation(unittest.TestCase):
+    def setUp(self):
+        self.evacuation_site = EvacuationSite(**test_data[0])
+        current_latitude = test_data[1]["latitude"]
+        current_longitude = test_data[1]["longitude"]
+        self.current_location = CurrentLocation(
+            latitude=current_latitude, longitude=current_longitude
+        )
+
+    def test_get_distance_to(self):
+        result = self.current_location.get_distance_to(self.evacuation_site)
+        self.assertEqual(result, 1732.87)
 
 
 if __name__ == "__main__":

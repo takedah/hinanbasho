@@ -1,13 +1,44 @@
+import numpy as np
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
-from hinanbasho.factory import Factory
+from decimal import Decimal, ROUND_HALF_UP
 from hinanbasho.db import DatabaseError
 from hinanbasho.db import DataError
+from hinanbasho.factory import Factory
 from hinanbasho.logs import DBLog
 
 
-class EvacuationSite:
+class Point:
+    """
+    地点の情報を表す。
+
+    Attributes:
+        latitude (float): 緯度（北緯）を表す小数
+        longitude (float): 経度（東経）を表す小数
+
+    """
+
+    def __init__(self, latitude: float, longitude: float):
+        """
+        Args:
+            latitude (float): 緯度（北緯）を表す小数
+            longitude (float): 経度（東経）を表す小数
+
+        """
+        self.__latitude = float(latitude)
+        self.__longitude = float(longitude)
+
+    @property
+    def latitude(self) -> float:
+        return self.__latitude
+
+    @property
+    def longitude(self) -> float:
+        return self.__longitude
+
+
+class EvacuationSite(Point):
     """避難場所のデータモデル
 
     Attributes:
@@ -30,8 +61,7 @@ class EvacuationSite:
         self.__postal_code = str(kwargs["postal_code"])
         self.__address = str(kwargs["address"])
         self.__phone_number = str(kwargs["phone_number"])
-        self.__latitude = float(kwargs["latitude"])
-        self.__longitude = float(kwargs["longitude"])
+        Point.__init__(self, float(kwargs["latitude"]), float(kwargs["longitude"]))
 
     @property
     def site_name(self) -> str:
@@ -48,14 +78,6 @@ class EvacuationSite:
     @property
     def phone_number(self) -> str:
         return self.__phone_number
-
-    @property
-    def latitude(self) -> float:
-        return self.__latitude
-
-    @property
-    def longitude(self) -> float:
-        return self.__longitude
 
 
 class EvacuationSiteFactory(Factory):
@@ -106,7 +128,7 @@ class EvacuationSiteService:
         self.__logger = DBLog()
 
     def truncate(self):
-        """スケジュールテーブルのデータを全削除"""
+        """避難場所テーブルのデータを全削除"""
         state = "TRUNCATE TABLE " + self.__table_name + " RESTART IDENTITY;"
         self.__db.execute(state)
 
@@ -173,3 +195,44 @@ class EvacuationSiteService:
         except (DatabaseError, DataError) as e:
             self.__logger.error_log(e.args[0])
             return False
+
+
+class CurrentLocation(Point):
+    """
+    現在地の情報を表す
+
+    Attributes:
+        latitude (float): 避難場所の緯度
+        longitude (float): 避難場所の経度
+
+    """
+
+    def __init__(self, latitude: float = 0, longitude: float = 0):
+        Point.__init__(self, latitude, longitude)
+
+    def get_distance_to(self, end_point: EvacuationSite) -> float:
+        """
+        避難場所の緯度と経度を属性に持つオブジェクトを引数に取り、
+        現在地と避難場所の2点間の距離を計算して返す。
+
+        Args:
+            end_point (obj:`EvacuationSite`): 避難場所の緯度と経度を持つオブジェクト
+
+        Returns:
+            distance (float): 現在地と避難場所の2点間の距離（メートル）
+
+        """
+        earth_radius = 6378137.00
+        start_latitude = np.radians(self.latitude)
+        start_longitude = np.radians(self.longitude)
+        end_latitude = np.radians(end_point.latitude)
+        end_longitude = np.radians(end_point.longitude)
+        distance = earth_radius * np.arccos(
+            np.sin(start_latitude) * np.sin(end_latitude)
+            + np.cos(start_latitude)
+            * np.cos(end_latitude)
+            * np.cos(end_longitude - start_longitude)
+        )
+        return float(
+            Decimal(str(distance)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        )
