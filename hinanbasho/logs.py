@@ -34,7 +34,6 @@ class DBLog(Log):
             msg (str): メッセージ
 
         """
-
         return self.__logger.log(level, msg)
 
     def error_log(self, msg):
@@ -47,8 +46,6 @@ class DBLog(Log):
             bool: ログに成功したら真を返す
 
         """
-
         log_msg = self.logging_time() + "," + '"' + msg + '"'
-
         self._log(30, log_msg)
         return True
