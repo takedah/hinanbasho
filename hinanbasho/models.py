@@ -122,13 +122,12 @@ class CurrentLocation(Point):
     def __init__(self, latitude: float = 0, longitude: float = 0):
         Point.__init__(self, latitude, longitude)
 
-    def get_distance_to(self, end_point: EvacuationSite) -> float:
+    def get_distance_to(self, end_point: Point) -> float:
         """
-        避難場所の緯度と経度を属性に持つオブジェクトを引数に取り、
         現在地と避難場所の2点間の距離を計算して返す。
 
         Args:
-            end_point (obj:`EvacuationSite`): 避難場所の緯度と経度を持つオブジェクト
+            end_point (obj:`Point`): 避難場所の緯度と経度を持つオブジェクト
 
         Returns:
             distance (float): 現在地と避難場所の2点間の距離（メートル）
