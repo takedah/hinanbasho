@@ -100,7 +100,7 @@ class EvacuationSiteService:
         """条件に合致する避難場所データのリストを返す。
 
         Returns:
-            sites (obj:`EvacuationSiteFactory`): 避難場所オブジェクト全件のリスト
+            sites (list of obj:`EvacuationSiteFactory`): 避難場所オブジェクト全件のリスト
 
         """
         state = (

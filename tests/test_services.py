@@ -90,6 +90,8 @@ class TestEvacuationSiteService(unittest.TestCase):
         self.assertEqual(near_sites[0][1], 603.69)
         self.assertEqual(near_sites[1][0].site_name, "クリスタルパーク")
         self.assertEqual(near_sites[1][1], 1583.51)
+        self.assertEqual(near_sites[4][0].site_name, "忠和公園")
+        self.assertEqual(near_sites[4][1], 3985.04)
 
 
 if __name__ == "__main__":
