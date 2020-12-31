@@ -1,9 +1,9 @@
 import unittest
+from hinanbasho.db import DB
 from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
 from hinanbasho.services import EvacuationSiteService
-from hinanbasho.db import DB
 
 
 test_data = [
@@ -64,7 +64,7 @@ class TestEvacuationSiteService(unittest.TestCase):
         self.factory = EvacuationSiteFactory()
         for d in test_data:
             self.factory.create(d)
-        self.db = DB(DB.TEST_DATABASE_URL)
+        self.db = DB()
         self.service = EvacuationSiteService(self.db)
         self.current_location = CurrentLocation(
             latitude=43.7708179, longitude=142.3628371
@@ -86,12 +86,15 @@ class TestEvacuationSiteService(unittest.TestCase):
 
     def test_get_near_sites(self):
         near_sites = self.service.get_near_sites(self.current_location)
-        self.assertEqual(near_sites[0][0].site_name, "常磐公園")
-        self.assertEqual(near_sites[0][1], 603.69)
-        self.assertEqual(near_sites[1][0].site_name, "クリスタルパーク")
-        self.assertEqual(near_sites[1][1], 1583.51)
-        self.assertEqual(near_sites[4][0].site_name, "忠和公園")
-        self.assertEqual(near_sites[4][1], 3985.04)
+        # 一番近い避難場所
+        self.assertEqual(near_sites[0]["site"].site_name, "常磐公園")
+        self.assertEqual(near_sites[0]["distance"], 603.69)
+        # 二番目に近い避難場所
+        self.assertEqual(near_sites[1]["site"].site_name, "クリスタルパーク")
+        self.assertEqual(near_sites[1]["distance"], 1583.51)
+        # 一番遠い避難場所
+        self.assertEqual(near_sites[-1]["site"].site_name, "忠和公園")
+        self.assertEqual(near_sites[-1]["distance"], 3985.04)
 
 
 if __name__ == "__main__":

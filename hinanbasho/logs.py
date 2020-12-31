@@ -11,7 +11,6 @@ class Log:
             logging_time (str): 年月日表記文字列
 
         """
-
         return datetime.strftime(datetime.now(), "%Y/%m/%d %H:%M:%S")
 
 
@@ -26,17 +25,21 @@ class DBLog(Log):
         self.__logger = logger
         self.__logger.addHandler(file_handler)
 
-    def _log(self, level, msg):
+    def _log(self, level, msg) -> bool:
         """logging.logger.logをラップしただけ
 
         Args:
             level (int): ログレベル
             msg (str): メッセージ
 
-        """
-        return self.__logger.log(level, msg)
+        Returns:
+            bool: ログに成功したら真を返す
 
-    def error_log(self, msg):
+        """
+        self.__logger.log(level, msg)
+        return True
+
+    def error_log(self, msg) -> bool:
         """エラーログ
 
         Args:
@@ -48,4 +51,3 @@ class DBLog(Log):
         """
         log_msg = self.logging_time() + "," + '"' + msg + '"'
         self._log(30, log_msg)
-        return True

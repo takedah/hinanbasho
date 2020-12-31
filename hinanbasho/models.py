@@ -1,12 +1,13 @@
 import numpy as np
 from decimal import Decimal
 from decimal import ROUND_HALF_UP
+from hinanbasho.errors import LocationError
 from hinanbasho.factory import Factory
 
 
 class Point:
     """
-    地点の情報を表す。
+    緯度と経度を要素に持つ地点情報を表す。
 
     Attributes:
         latitude (float): 緯度（北緯）を表す小数
@@ -21,8 +22,11 @@ class Point:
             longitude (float): 経度（東経）を表す小数
 
         """
-        self.__latitude = float(latitude)
-        self.__longitude = float(longitude)
+        try:
+            self.__latitude = float(latitude)
+            self.__longitude = float(longitude)
+        except (TypeError, ValueError):
+            raise LocationError("緯度経度の値が正しくありません。")
 
     @property
     def latitude(self) -> float:
@@ -90,7 +94,7 @@ class EvacuationSiteFactory(Factory):
     def items(self) -> list:
         return self.__items
 
-    def _create_item(self, row: dict):
+    def _create_item(self, row: dict) -> EvacuationSite:
         """避難場所オブジェクトを作成する。
 
         Args:
@@ -99,14 +103,18 @@ class EvacuationSiteFactory(Factory):
         """
         return EvacuationSite(**row)
 
-    def _register_item(self, item: EvacuationSite):
+    def _register_item(self, item: EvacuationSite) -> bool:
         """避難場所オブジェクトをリストに追加。
 
         Args:
             item (:obj:`EvacuationSite`): 避難場所オブジェクト
 
+        Returns:
+            bool: 成功したら真を返す
+
         """
         self.__items.append(item)
+        return True
 
 
 class CurrentLocation(Point):
@@ -119,7 +127,7 @@ class CurrentLocation(Point):
 
     """
 
-    def __init__(self, latitude: float = 0, longitude: float = 0):
+    def __init__(self, latitude: float = None, longitude: float = None):
         Point.__init__(self, latitude, longitude)
 
     def get_distance_to(self, end_point: Point) -> float:

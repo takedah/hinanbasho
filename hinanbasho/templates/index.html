@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-md-12">
+            <section>
+                <h1 class="h3">旭川市避難場所検索</h1>
+                <p>旭川市ホームページから取得した指定緊急避難場所のオープンデータを使って、旭川市の指定緊急避難場所を検索できます。</p>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <section id="nudge">
+                <p id="gpsServiceStatus"></p>
+                <p><button id="useGps" class="btn btn-primary">現在地の位置情報を取得</button></p>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <section id="searchByGps">
+                <form action="./search_by_gps" method="POST">
+                    <p>
+                        <input type="hidden" id="currentLatitude" name="current_latitude" value="">
+                        <input type="hidden" id="currentLongitude" name="current_longitude" value="">
+                        <button type="submit" id="sendCurrentLocation" class="btn btn-primary">現在地から近い避難所を検索</button>
+                    </p>
+                </form>
+            </section>
+            <script charset="utf-8" src="{{ url_for('static', filename='js/get_location.js') }}"></script>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <blockquote>
+                <dl>
+                    <dt>指定緊急避難場所とは</dt>
+                    <dd>災害が発生し、又は発生するおそれがある場合にその危険から逃れるための避難場所として、国で定める基準に従い、災害の種類ごとに安全性等の一定の基準を満たす施設又は場所をいいます。</dd>
+                </dl>
+                <cite><a href="http://www.city.asahikawa.hokkaido.jp/kurashi/320/321/d053843.html" title="旭川市ホームページ">避難所・避難場所について（旭川市ホームページ）</a></cite>
+            </blockquote>
+        </div>
+    </div>
+</div>
+{% endblock %}

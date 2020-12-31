@@ -1,8 +1,8 @@
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
-from hinanbasho.db import DatabaseError
-from hinanbasho.db import DataError
+from hinanbasho.errors import DatabaseError
+from hinanbasho.errors import DataError
 from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
@@ -13,23 +13,23 @@ class EvacuationSiteService:
     """避難場所サービス"""
 
     def __init__(self, db):
-        """
-        Args:
-            db(:obj:`DB`): データベース操作をラップしたオブジェクト
-
-        """
         self.__db = db
         self.__table_name = "evacuation_sites"
         self.__logger = DBLog()
 
     def truncate(self) -> bool:
-        """避難場所テーブルのデータを全削除"""
+        """避難場所テーブルのデータを全削除
+
+        Returns:
+            bool: データの登録が成功したら真を返す
+
+        """
         state = "TRUNCATE TABLE " + self.__table_name + " RESTART IDENTITY;"
         try:
             self.__db.execute(state)
             return True
         except (DatabaseError, DataError) as e:
-            self.__logger.error_log(e.args[0])
+            self.__logger.error_log(e.message)
             return False
 
     def create(self, evacuation_site: EvacuationSite) -> bool:
@@ -93,7 +93,7 @@ class EvacuationSiteService:
             self.__db.execute(state, values)
             return True
         except (DatabaseError, DataError) as e:
-            self.__logger.error_log(e.args[0])
+            self.__logger.error_log(e.message)
             return False
 
     def get_all(self) -> list:
@@ -129,5 +129,10 @@ class EvacuationSiteService:
         """
         near_sites = list()
         for site in self.get_all():
-            near_sites.append([site, current_location.get_distance_to(site)])
-        return sorted(near_sites, key=lambda x: x[1])[:5]
+            near_sites.append(
+                {
+                    "site": site,
+                    "distance": current_location.get_distance_to(site),
+                }
+            )
+        return sorted(near_sites, key=lambda x: x["distance"])[:5]

@@ -1,4 +1,5 @@
 import unittest
+from hinanbasho.errors import LocationError
 from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
@@ -69,6 +70,10 @@ class TestCurrentLocation(unittest.TestCase):
     def test_get_distance_to(self):
         result = self.current_location.get_distance_to(self.evacuation_site)
         self.assertEqual(result, 1732.87)
+
+    def test_init(self):
+        with self.assertRaises(LocationError):
+            CurrentLocation(latitude="hoge", longitude="fuga")
 
 
 if __name__ == "__main__":
