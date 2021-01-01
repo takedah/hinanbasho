@@ -41,6 +41,7 @@ class EvacuationSite(Point):
     """避難場所のデータモデル
 
     Attributes:
+        site_id (int): 連番
         site_name (str): 避難場所名
         postal_code (str): 避難場所の郵便番号
         address (str): 避難場所の住所
@@ -56,11 +57,16 @@ class EvacuationSite(Point):
             **kwargs: 避難場所の情報を格納したディクショナリ
 
         """
+        self.__site_id = int(kwargs["site_id"])
         self.__site_name = str(kwargs["site_name"])
         self.__postal_code = str(kwargs["postal_code"])
         self.__address = str(kwargs["address"])
         self.__phone_number = str(kwargs["phone_number"])
         Point.__init__(self, float(kwargs["latitude"]), float(kwargs["longitude"]))
+
+    @property
+    def site_id(self) -> int:
+        return self.__site_id
 
     @property
     def site_name(self) -> str:

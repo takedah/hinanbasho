@@ -23,19 +23,22 @@ class TestScraper(unittest.TestCase):
         )
         expect = [
             {
+                "site_id": 1,
                 "site_name": "常磐公園",
                 "postal_code": "070-0044",
                 "address": "北海道旭川市常磐公園",
                 "phone_number": "0166-23-8961",
                 "latitude": 43.7748548,
-                "longitude": 142.3578223,
-            }, {
+                "longitude": 142.3578224,
+            },
+            {
+                "site_id": 2,
                 "site_name": "豊西会館",
                 "postal_code": "074-1182",
                 "address": "北海道旭川市神居町豊里",
                 "phone_number": "なし",
                 "latitude": 43.6832208,
-                "longitude": 142.1762534,
+                "longitude": 142.1762533,
             },
         ]
         downloaded_csv = Scraper("http://dummy.local")

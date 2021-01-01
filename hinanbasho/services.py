@@ -43,6 +43,7 @@ class EvacuationSiteService:
 
         """
         items = [
+            "site_id",
             "site_name",
             "postal_code",
             "address",
@@ -73,11 +74,12 @@ class EvacuationSiteService:
             + place_holders[1:]
             + ")"
             + " "
-            "ON CONFLICT(latitude,longitude)" + " "
+            "ON CONFLICT(site_id)" + " "
             "DO UPDATE SET" + " " + upsert[1:]
         )
 
         values = [
+            evacuation_site.site_id,
             evacuation_site.site_name,
             evacuation_site.postal_code,
             evacuation_site.address,
@@ -104,7 +106,7 @@ class EvacuationSiteService:
 
         """
         state = (
-            "SELECT site_name,postal_code,address,phone_number,latitude,longitude"
+            "SELECT site_id,site_name,postal_code,address,phone_number,latitude,longitude"
             + " "
             + "FROM evacuation_sites ORDER BY id;"
         )
@@ -123,7 +125,7 @@ class EvacuationSiteService:
                 オブジェクト
 
         Returns:
-            near_sites (list of lists): 現在地から最も近い避難場所上位5件の
+            near_sites (list of dicts): 現在地から最も近い避難場所上位5件の
                 避難場所オブジェクトと現在地までの距離のリストを要素に持つ二次元配列
 
         """

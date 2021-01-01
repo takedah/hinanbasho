@@ -7,6 +7,7 @@ from hinanbasho.models import EvacuationSiteFactory
 
 test_data = [
     {
+        "site_id": 1,
         "site_name": "常磐公園",
         "postal_code": "070-0044",
         "address": "北海道旭川市常磐公園",
@@ -15,6 +16,7 @@ test_data = [
         "longitude": 142.3578223,
     },
     {
+        "site_id": 2,
         "site_name": "花咲スポーツ公園",
         "postal_code": "071-0901",
         "address": "北海道旭川市花咲町1〜5丁目",
@@ -29,7 +31,10 @@ class TestEvacuationSite(unittest.TestCase):
     def setUp(self):
         self.evacuation_site = EvacuationSite(**test_data[0])
 
-    def test_name(self):
+    def test_site_id(self):
+        self.assertEqual(self.evacuation_site.site_id, 1)
+
+    def test_site_name(self):
         self.assertEqual(self.evacuation_site.site_name, "常磐公園")
 
     def test_postal_code(self):

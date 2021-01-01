@@ -8,6 +8,7 @@ from hinanbasho.services import EvacuationSiteService
 
 test_data = [
     {
+        "site_id": 1,
         "site_name": "常磐公園",
         "postal_code": "070-0044",
         "address": "北海道旭川市常磐公園",
@@ -16,6 +17,7 @@ test_data = [
         "longitude": 142.3578223,
     },
     {
+        "site_id": 2,
         "site_name": "花咲スポーツ公園",
         "postal_code": "071-0901",
         "address": "北海道旭川市花咲町1〜5丁目",
@@ -24,6 +26,7 @@ test_data = [
         "longitude": 142.3681739,
     },
     {
+        "site_id": 3,
         "site_name": "イオンモール旭川西店(3階駐車場及び屋上駐車場)",
         "postal_code": "070-0823",
         "address": "北海道旭川市緑町23丁目",
@@ -32,6 +35,7 @@ test_data = [
         "longitude": 142.325844,
     },
     {
+        "site_id": 4,
         "site_name": "東光スポーツ公園",
         "postal_code": "078-8361",
         "address": "北海道旭川市東光21～27条7・8丁目・東光22～27条9丁目",
@@ -40,6 +44,7 @@ test_data = [
         "longitude": 142.4120177,
     },
     {
+        "site_id": 5,
         "site_name": "クリスタルパーク",
         "postal_code": "070-8003",
         "address": "北海道旭川市神楽3条7・8丁目",
@@ -48,6 +53,7 @@ test_data = [
         "longitude": 142.3520454,
     },
     {
+        "site_id": 6,
         "site_name": "忠和公園",
         "postal_code": "070-8021",
         "address": "北海道旭川市神居町忠和",

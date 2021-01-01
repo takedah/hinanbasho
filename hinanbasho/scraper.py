@@ -23,7 +23,10 @@ class Scraper:
         csv_content = io.BytesIO(response.content)
         df = pd.read_csv(csv_content, encoding="cp932", header=0, dtype=str)
         df.replace(np.nan, "", inplace=True)
+        i = 0
         for row in df.values.tolist():
+            # CSVの行数をデータベースのキーにできるようにする
+            csv_row_number = i + 1
             # オープンデータの豊西会館だけ緯度経度が抜けているので対策する
             if row[0] == "豊西会館":
                 latitude = 43.6832208
@@ -33,6 +36,7 @@ class Scraper:
                 longitude = float(row[6])
             self.__lists.append(
                 {
+                    "site_id": csv_row_number,
                     "site_name": row[0],
                     "postal_code": row[1],
                     "address": row[2],
@@ -41,6 +45,7 @@ class Scraper:
                     "longitude": longitude,
                 }
             )
+            i += 1
 
     @property
     def lists(self) -> list:
