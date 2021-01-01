@@ -98,23 +98,35 @@ class EvacuationSiteService:
             self.__logger.error_log(e.message)
             return False
 
+    def _fetch(self, dict_cursor) -> list:
+        """
+        psycopg2.extras.DictCursorオブジェクトから避難場所データのリストを作成する。
+
+        Args:
+            dict_cursor (obj:`psycopg2.extras.DictCursor`): 検索結果のイテレータ
+
+        Returns:
+            sites (list of obj:`EvacuationSite`): 検索結果の避難場所オブジェクトのリスト
+
+        """
+        factory = EvacuationSiteFactory()
+        for row in dict_cursor:
+            factory.create(row)
+        return factory.items
+
     def get_all(self) -> list:
         """条件に合致する避難場所データのリストを返す。
 
         Returns:
-            sites (list of obj:`EvacuationSiteFactory`): 避難場所オブジェクト全件のリスト
+            sites (list of obj:`EvacuationSite`): 避難場所オブジェクト全件のリスト
 
         """
         state = (
-            "SELECT site_id,site_name,postal_code,address,phone_number,latitude,longitude"
-            + " "
-            + "FROM evacuation_sites ORDER BY id;"
+            "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
+            + "longitude FROM evacuation_sites ORDER BY site_id;"
         )
         self.__db.execute(state)
-        factory = EvacuationSiteFactory()
-        for row in self.__db.fetchall():
-            factory.create(row)
-        return factory.items
+        return self._fetch(self.__db.fetchall())
 
     def get_near_sites(self, current_location: CurrentLocation) -> list:
         """
@@ -138,3 +150,24 @@ class EvacuationSiteService:
                 }
             )
         return sorted(near_sites, key=lambda x: x["distance"])[:5]
+
+    def find_by_site_id(self, site_id) -> EvacuationSite:
+        """
+        避難場所連番から該当する避難場所データを返す。
+
+        Args:
+            site_id (int): 避難場所連番
+
+        Returns
+            evacuation_site (obj:`EvacuationSite`): 避難場所データ
+
+        """
+        state = (
+            "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
+            + "longitude FROM evacuation_sites WHERE site_id="
+            + "'"
+            + str(site_id)
+            + "';"
+        )
+        self.__db.execute(state)
+        return self._fetch(self.__db.fetchall())[0]

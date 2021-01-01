@@ -102,6 +102,10 @@ class TestEvacuationSiteService(unittest.TestCase):
         self.assertEqual(near_sites[-1]["site"].site_name, "忠和公園")
         self.assertEqual(near_sites[-1]["distance"], 3985.04)
 
+    def test_find_by_site_id(self):
+        for site in self.service.find_by_site_id(3):
+            self.assertEqual(site.site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)")
+
 
 if __name__ == "__main__":
     unittest.main()

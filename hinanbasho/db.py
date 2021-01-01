@@ -44,20 +44,11 @@ class DB:
         ) as e:
             raise DataError(e.args[0])
 
-    def fetchone(self) -> psycopg2.extras.DictCursor:
-        """cursorオブジェクトのfetchoneメソッドのラッパー。
-
-        Returns:
-            results (:obj:`psycopg2.extras.DictCursor`): 検索結果のイテレータ
-
-        """
-        return self.__cursor.fetchone()
-
     def fetchall(self) -> psycopg2.extras.DictCursor:
         """cursorオブジェクトのfetchallメソッドのラッパー。
 
         Returns:
-            results (:obj:`Cursor`): 検索結果のイテレータ
+            results (:obj:`psycopg2.extras.DictCursor`): 検索結果のイテレータ
 
         """
         return self.__cursor.fetchall()
