@@ -88,6 +88,26 @@ def search_by_gps():
         )
 
 
+@app.route("/site/<site_id>")
+def site(site_id):
+    site_id = escape(site_id)
+    try:
+        site_id = int(site_id)
+    except ValueError:
+        title = "検索条件に誤りがあります"
+        error_message = "URLが正しくありません。"
+        return render_template("error.html", title=title, error_message=error_message)
+
+    service = EvacuationSiteService(get_db())
+    result = service.find_by_site_id(site_id)
+    title = "避難場所「" + result.site_name + "」の情報"
+    return render_template(
+        "site.html",
+        title=title,
+        result=result,
+    )
+
+
 @app.errorhandler(404)
 def not_found(error):
     title = "404 Page Not Found."

@@ -17,6 +17,11 @@ function getLocation() {
     };
 
     function setGpsServiceStatus(message) {
+        if (message == "") {
+            gpsServiceStatus.className = "none";
+        } else {
+            gpsServiceStatus.className = "alert alert-warning";
+        }
         gpsServiceStatus.innerHTML = message;
     };
 
