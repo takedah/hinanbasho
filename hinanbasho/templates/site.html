@@ -39,5 +39,11 @@
             </table>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="mapid" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-pointname="{{ result.site_name|safe }}"></div>
+        </div>
+    </div>
 </div>
+<script charset="utf-8" src="{{ url_for('static', filename='js/show_map.js') }}"></script>
 {% endblock %}
