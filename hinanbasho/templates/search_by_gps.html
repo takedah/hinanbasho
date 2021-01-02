@@ -12,7 +12,6 @@
                             <th>近い順</th>
                             <th>避難場所名</th>
                             <th>住所</th>
-                            <th>電話番号</th>
                             <th>現在地からの距離</th>
                         </tr>
                     </thead>
@@ -22,7 +21,6 @@
                             <td>{{ result['order'] }}</td>
                             <td><a href="site/{{ result['site'].site_id }}" title="{{ result['site'].site_name }}の詳細へ">{{ result['site'].site_name }}</a></td>
                             <td>{{ result['site'].address }}</td>
-                            <td>{{ result['site'].phone_number }}</td>
                             <td>約{{ result['distance'] }}km</td>
                         </tr>
                         {% endfor %}
