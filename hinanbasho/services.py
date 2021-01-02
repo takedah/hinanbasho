@@ -1,6 +1,8 @@
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
+from decimal import Decimal
+from decimal import ROUND_HALF_UP
 from hinanbasho.errors import DatabaseError
 from hinanbasho.errors import DataError
 from hinanbasho.models import CurrentLocation
@@ -152,7 +154,14 @@ class EvacuationSiteService:
             )
         near_sites = sorted(near_sites, key=lambda x: x["distance"])[:5]
         for i in range(len(near_sites)):
+            # 現在地から近い順で連番を付与する。
             near_sites[i]["order"] = i + 1
+            # 距離を分かりやすくするためキロメートルに変換する。
+            near_sites[i]["distance"] = float(
+                Decimal(str(near_sites[i]["distance"] / 1000)).quantize(
+                    Decimal("0.1"), rounding=ROUND_HALF_UP
+                )
+            )
         return near_sites
 
     def find_by_site_id(self, site_id) -> EvacuationSite:

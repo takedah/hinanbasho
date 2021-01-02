@@ -95,15 +95,15 @@ class TestEvacuationSiteService(unittest.TestCase):
         # 一番近い避難場所
         self.assertEqual(near_sites[0]["order"], 1)
         self.assertEqual(near_sites[0]["site"].site_name, "常磐公園")
-        self.assertEqual(near_sites[0]["distance"], 603.69)
+        self.assertEqual(near_sites[0]["distance"], 0.6)
         # 二番目に近い避難場所
         self.assertEqual(near_sites[1]["order"], 2)
         self.assertEqual(near_sites[1]["site"].site_name, "クリスタルパーク")
-        self.assertEqual(near_sites[1]["distance"], 1583.51)
+        self.assertEqual(near_sites[1]["distance"], 1.6)
         # 一番遠い避難場所
         self.assertEqual(near_sites[-1]["order"], 5)
         self.assertEqual(near_sites[-1]["site"].site_name, "忠和公園")
-        self.assertEqual(near_sites[-1]["distance"], 3985.04)
+        self.assertEqual(near_sites[-1]["distance"], 4)
 
     def test_find_by_site_id(self):
         self.assertEqual(
