@@ -2,6 +2,7 @@ import io
 import numpy as np
 import pandas as pd
 import requests
+from hinanbasho.config import Config
 
 
 class Scraper:
@@ -12,14 +13,11 @@ class Scraper:
 
     """
 
-    def __init__(self, url: str):
-        """
-        Args:
-            url (str): CSVのURL
-
-        """
+    def __init__(self):
         self.__lists = list()
-        response = requests.get(url)
+        # 旭川市ホームページのTLS証明書のDH鍵長に問題があるためセキュリティを下げて回避する
+        requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += "HIGH:!DH"
+        response = requests.get(Config.OPENDATA_URL)
         csv_content = io.BytesIO(response.content)
         df = pd.read_csv(csv_content, encoding="cp932", header=0, dtype=str)
         df.replace(np.nan, "", inplace=True)
