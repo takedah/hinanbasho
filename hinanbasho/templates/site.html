@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container mb-5">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <h1 class="h4 mb-3">避難場所「{{ result.site_name }}」の情報</h3>
             <p class="alert alert-success">旭川市ホームページのオープンデータから取得した避難場所の情報を表示しています。</p>
             <section>
@@ -36,7 +36,14 @@
                 </table>
             </section>
             <section>
-                <div id="mapid" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-pointname="{{ result.site_name|safe }}"></div>
+                <div id="mapid" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-pointname="{{ result.site_name|safe }}" class="mb-3"></div>
+            </section>
+        </div>
+        <div class="col-md-4">
+            <section>
+                <h2 class="h5">Googleマップで避難場所までの経路を探す</h2>
+                <p>以下のリンクからGoogleマップで{{ result.site_name }}までの経路を検索できます。（外部サイトへ移動）</p>
+                <p><a href="https://www.google.com/maps/search/?api=1&query={{ result.latitude }},{{ result.longitude }}" class="btn btn-success" title="Googleマップで開く">Googleマップで経路を探す</a></p>
             </section>
         </div>
     </div>
