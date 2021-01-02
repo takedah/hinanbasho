@@ -8,7 +8,6 @@ from hinanbasho.errors import DataError
 from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
-from hinanbasho.logs import DBLog
 
 
 class EvacuationSiteService:
@@ -17,7 +16,6 @@ class EvacuationSiteService:
     def __init__(self, db):
         self.__db = db
         self.__table_name = "evacuation_sites"
-        self.__logger = DBLog()
 
     def truncate(self) -> bool:
         """避難場所テーブルのデータを全削除
@@ -30,8 +28,7 @@ class EvacuationSiteService:
         try:
             self.__db.execute(state)
             return True
-        except (DatabaseError, DataError) as e:
-            self.__logger.error_log(e.message)
+        except (DatabaseError, DataError):
             return False
 
     def create(self, evacuation_site: EvacuationSite) -> bool:
@@ -96,8 +93,7 @@ class EvacuationSiteService:
         try:
             self.__db.execute(state, values)
             return True
-        except (DatabaseError, DataError) as e:
-            self.__logger.error_log(e.message)
+        except (DatabaseError, DataError):
             return False
 
     def _fetch(self, dict_cursor) -> list:
