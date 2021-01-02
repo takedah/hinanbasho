@@ -76,17 +76,26 @@ def search_by_gps():
         current_latitude = escape(request.form["current_latitude"])
         current_longitude = escape(request.form["current_longitude"])
         try:
+            current_latitude = float(current_latitude)
+            current_longitude = float(current_longitude)
             current_location = CurrentLocation(
                 latitude=current_latitude, longitude=current_longitude
             )
-        except LocationError as e:
+        except (LocationError, ValueError):
             title = "検索条件に誤りがあります"
-            return render_template("error.html", title=title, error_message=e.message)
+            error_message = "緯度経度が正しくありません。"
+            return render_template(
+                "error.html", title=title, error_message=error_message
+            )
 
         service = EvacuationSiteService(get_db())
         near_sites = service.get_near_sites(current_location)
         return render_template(
-            "search_by_gps.html", title=title, search_results=near_sites
+            "search_by_gps.html",
+            title=title,
+            search_results=near_sites,
+            current_latitude=current_latitude,
+            current_longitude=current_longitude,
         )
 
 

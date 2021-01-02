@@ -93,18 +93,22 @@ class TestEvacuationSiteService(unittest.TestCase):
     def test_get_near_sites(self):
         near_sites = self.service.get_near_sites(self.current_location)
         # 一番近い避難場所
+        self.assertEqual(near_sites[0]["order"], 1)
         self.assertEqual(near_sites[0]["site"].site_name, "常磐公園")
         self.assertEqual(near_sites[0]["distance"], 603.69)
         # 二番目に近い避難場所
+        self.assertEqual(near_sites[1]["order"], 2)
         self.assertEqual(near_sites[1]["site"].site_name, "クリスタルパーク")
         self.assertEqual(near_sites[1]["distance"], 1583.51)
         # 一番遠い避難場所
+        self.assertEqual(near_sites[-1]["order"], 5)
         self.assertEqual(near_sites[-1]["site"].site_name, "忠和公園")
         self.assertEqual(near_sites[-1]["distance"], 3985.04)
 
     def test_find_by_site_id(self):
-        for site in self.service.find_by_site_id(3):
-            self.assertEqual(site.site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)")
+        self.assertEqual(
+            self.service.find_by_site_id(3).site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)"
+        )
 
 
 if __name__ == "__main__":

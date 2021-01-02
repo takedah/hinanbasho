@@ -145,11 +145,15 @@ class EvacuationSiteService:
         for site in self.get_all():
             near_sites.append(
                 {
+                    "order": None,
                     "site": site,
                     "distance": current_location.get_distance_to(site),
                 }
             )
-        return sorted(near_sites, key=lambda x: x["distance"])[:5]
+        near_sites = sorted(near_sites, key=lambda x: x["distance"])[:5]
+        for i in range(len(near_sites)):
+            near_sites[i]["order"] = i + 1
+        return near_sites
 
     def find_by_site_id(self, site_id) -> EvacuationSite:
         """

@@ -5,43 +5,39 @@
         <div class="col-md-12">
             <h1 class="h4 mb-3">避難場所「{{ result.site_name }}」の情報</h3>
             <p class="alert alert-success">旭川市ホームページのオープンデータから取得した避難場所の情報を表示しています。</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-striped table-bordered table-hover">
-                <tbody>
-                    <tr>
-                        <th>名称</th>
-                        <td>{{ result.site_name }}</td>
-                    </tr>
-                    <tr>
-                        <th>郵便番号</th>
-                        <td>{{ result.postal_code }}</td>
-                    </tr>
-                    <tr>
-                        <th>住所</th>
-                        <td>{{ result.address }}</td>
-                    </tr>
-                    <tr>
-                        <th>電話番号</th>
-                        <td>{{ result.phone_number }}</td>
-                    </tr>
-                    <tr>
-                        <th>緯度（北緯）</th>
-                        <td>{{ result.latitude }}</td>
-                    </tr>
-                    <tr>
-                        <th>経度（東経）</th>
-                        <td>{{ result.longitude }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id="mapid" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-pointname="{{ result.site_name|safe }}"></div>
+            <section>
+                <table class="table table-striped table-bordered table-hover">
+                    <tbody>
+                        <tr>
+                            <th>名称</th>
+                            <td>{{ result.site_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>郵便番号</th>
+                            <td>{{ result.postal_code }}</td>
+                        </tr>
+                        <tr>
+                            <th>住所</th>
+                            <td>{{ result.address }}</td>
+                        </tr>
+                        <tr>
+                            <th>電話番号</th>
+                            <td>{{ result.phone_number }}</td>
+                        </tr>
+                        <tr>
+                            <th>緯度（北緯）</th>
+                            <td>{{ result.latitude }}</td>
+                        </tr>
+                        <tr>
+                            <th>経度（東経）</th>
+                            <td>{{ result.longitude }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <div id="mapid" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-pointname="{{ result.site_name|safe }}"></div>
+            </section>
         </div>
     </div>
 </div>
