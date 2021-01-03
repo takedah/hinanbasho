@@ -142,7 +142,7 @@ class EvacuationSiteService:
 
         Returns:
             near_sites (list of dicts): 現在地から最も近い避難場所上位5件の
-                避難場所オブジェクトと現在地までの距離のリストを要素に持つ二次元配列
+                避難場所オブジェクトと現在地までの距離のリストを要素に持つ辞書のリスト
 
         """
         near_sites = list()
@@ -179,12 +179,9 @@ class EvacuationSiteService:
         """
         state = (
             "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
-            + "longitude FROM evacuation_sites WHERE site_id="
-            + "'"
-            + str(site_id)
-            + "';"
+            + "longitude FROM evacuation_sites WHERE site_id=%s;"
         )
-        self.__db.execute(state)
+        self.__db.execute(state, (str(site_id),))
         return self._fetch(self.__db.fetchall())[0]
 
     def get_area_names(self) -> list:
@@ -197,14 +194,35 @@ class EvacuationSiteService:
         """
         state = (
             "SELECT DISTINCT ON (area_name) area_name FROM evacuation_sites "
-            "LEFT JOIN area_addresses ON evacuation_sites.postal_code="
-            "area_addresses.postal_code;"
+            + "LEFT JOIN area_addresses ON evacuation_sites.postal_code="
+            + "area_addresses.postal_code;"
         )
         area_names = list()
         self.__db.execute(state)
         for row in self.__db.fetchall():
             area_names.append(row["area_name"])
         return area_names
+
+    def find_by_area_name(self, area_name) -> list:
+        """
+        町域名から避難場所を検索する。
+
+        Args:
+            area_name (str): 町域名
+
+        Returns:
+            area_sites (list of dicts): 指定した町域名を含む町域の避難場所の
+                避難場所オブジェクトのリスト
+
+        """
+        state = (
+            "SELECT site_id,site_name,evacuation_sites.postal_code,address,"
+            + "phone_number,latitude,longitude,area_name FROM evacuation_sites "
+            + "LEFT JOIN area_addresses ON evacuation_sites.postal_code="
+            + "area_addresses.postal_code WHERE area_name=%s;"
+        )
+        self.__db.execute(state, (area_name,))
+        return self._fetch(self.__db.fetchall())
 
 
 class AreaAddressService:

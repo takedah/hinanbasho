@@ -142,6 +142,10 @@ class TestEvacuationSiteService(unittest.TestCase):
         expect = ["花咲町", "常磐公園", "神楽３条", "神居町忠和", "東光２１条", "緑町"]
         self.assertEqual(self.service.get_area_names(), expect)
 
+    def test_find_by_area_name(self):
+        area_sites = self.service.find_by_area_name("花咲町")
+        self.assertEqual(area_sites[0].site_name, "花咲スポーツ公園")
+
 
 class TestAreaAddressService(unittest.TestCase):
     @classmethod

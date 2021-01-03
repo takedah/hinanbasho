@@ -119,6 +119,20 @@ def site(site_id):
     )
 
 
+@app.route("/area/<area_name>")
+def area(area_name):
+    area_name = escape(area_name)
+    service = EvacuationSiteService(get_db())
+    search_results = service.find_by_area_name(area_name)
+    title = "「" + area_name + "」の避難場所"
+    return render_template(
+        "area.html",
+        title=title,
+        area_name=area_name,
+        search_results=search_results,
+    )
+
+
 @app.errorhandler(404)
 def not_found(error):
     title = "404 Page Not Found."
