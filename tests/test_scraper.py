@@ -1,5 +1,6 @@
 import unittest
-from hinanbasho.scraper import Scraper
+from hinanbasho.scraper import OpenData
+from hinanbasho.scraper import PostOfficeCSV
 from requests import ConnectionError
 from requests import HTTPError
 from requests import RequestException
@@ -7,7 +8,7 @@ from requests import Timeout
 from unittest.mock import Mock, patch
 
 
-class TestScraper(unittest.TestCase):
+class TestOpenData(unittest.TestCase):
     @patch("hinanbasho.scraper.requests")
     def test_lists(self, mock_requests):
         csv_content = (
@@ -29,7 +30,7 @@ class TestScraper(unittest.TestCase):
                 "address": "北海道旭川市常磐公園",
                 "phone_number": "0166-23-8961",
                 "latitude": 43.7748548,
-                "longitude": 142.3578224,
+                "longitude": 142.3578223,
             },
             {
                 "site_id": 2,
@@ -38,23 +39,46 @@ class TestScraper(unittest.TestCase):
                 "address": "北海道旭川市神居町豊里",
                 "phone_number": "なし",
                 "latitude": 43.6832208,
-                "longitude": 142.1762533,
+                "longitude": 142.1762534,
             },
         ]
-        downloaded_csv = Scraper("http://dummy.local")
-        self.assertEqual(downloaded_csv.lists, expect)
+        open_data = OpenData()
+        self.assertEqual(open_data.lists, expect)
 
         mock_requests.get.side_effect = Timeout("Dummy Error.")
         with self.assertRaises(RequestException):
-            Scraper("http://dummy.local")
+            OpenData()
 
         mock_requests.get.side_effect = HTTPError("Dummy Error.")
         with self.assertRaises(RequestException):
-            Scraper("http://dummy.local")
+            OpenData()
 
         mock_requests.get.side_effect = ConnectionError("Dummy Error.")
         with self.assertRaises(RequestException):
-            Scraper("http://dummy.local")
+            OpenData()
+
+
+class TestPostOfficeCSV(unittest.TestCase):
+    def test_lists(self):
+        post_office_csv = PostOfficeCSV()
+        # 先頭行
+        expect = {
+            "postal_code": "0600000",
+            "area_address": "以下に掲載がない場合",
+        }
+        self.assertEqual(post_office_csv.lists[0], expect)
+        # 1382行目
+        expect = {
+            "postal_code": "0700055",
+            "area_address": "５条西",
+        }
+        self.assertEqual(post_office_csv.lists[1382], expect)
+        # 最終行
+        expect = {
+            "postal_code": "0861834",
+            "area_address": "礼文町",
+        }
+        self.assertEqual(post_office_csv.lists[-1], expect)
 
 
 if __name__ == "__main__":
