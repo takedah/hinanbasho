@@ -32,11 +32,17 @@ class OpenData:
             else:
                 latitude = float(row[5])
                 longitude = float(row[6])
+            # オープンデータの花咲スポーツ公園の郵便番号が誤っているので対策する
+            if row[0] == "花咲スポーツ公園":
+                postal_code = "070-0901"
+            else:
+                postal_code = row[1]
+
             self.__lists.append(
                 {
                     "site_id": csv_row_number,
                     "site_name": row[0],
-                    "postal_code": row[1],
+                    "postal_code": postal_code,
                     "address": row[2],
                     "phone_number": row[3],
                     "latitude": latitude,
