@@ -187,6 +187,25 @@ class EvacuationSiteService:
         self.__db.execute(state)
         return self._fetch(self.__db.fetchall())[0]
 
+    def get_area_names(self) -> list:
+        """
+        避難場所の住所の町域一覧を返す。
+
+        Returns:
+            area_names (list): 避難場所の住所の町域のリスト
+
+        """
+        state = (
+            "SELECT DISTINCT ON (area_name) area_name FROM evacuation_sites "
+            "LEFT JOIN area_addresses ON evacuation_sites.postal_code="
+            "area_addresses.postal_code;"
+        )
+        area_names = list()
+        self.__db.execute(state)
+        for row in self.__db.fetchall():
+            area_names.append(row["area_name"])
+        return area_names
+
 
 class AreaAddressService:
     """町域と郵便番号サービス"""

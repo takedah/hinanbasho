@@ -21,7 +21,7 @@ test_evacuation_site_data = [
     {
         "site_id": 2,
         "site_name": "花咲スポーツ公園",
-        "postal_code": "071-0901",
+        "postal_code": "070-0901",
         "address": "北海道旭川市花咲町1〜5丁目",
         "phone_number": "0166-52-1934",
         "latitude": 43.78850998,
@@ -67,7 +67,27 @@ test_evacuation_site_data = [
 test_area_address_data = [
     {
         "postal_code": "0700044",
-        "area_name": "北海道旭川市常磐公園",
+        "area_name": "常磐公園",
+    },
+    {
+        "postal_code": "0700901",
+        "area_name": "花咲町",
+    },
+    {
+        "postal_code": "0700823",
+        "area_name": "緑町",
+    },
+    {
+        "postal_code": "0788361",
+        "area_name": "東光２１条",
+    },
+    {
+        "postal_code": "0708003",
+        "area_name": "神楽３条",
+    },
+    {
+        "postal_code": "0708021",
+        "area_name": "神居町忠和",
     },
 ]
 
@@ -117,6 +137,10 @@ class TestEvacuationSiteService(unittest.TestCase):
         self.assertEqual(
             self.service.find_by_site_id(3).site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)"
         )
+
+    def test_get_area_names(self):
+        expect = ["花咲町", "常磐公園", "神楽３条", "神居町忠和", "東光２１条", "緑町"]
+        self.assertEqual(self.service.get_area_names(), expect)
 
 
 class TestAreaAddressService(unittest.TestCase):
