@@ -166,7 +166,7 @@ class EvacuationSiteService:
             )
         return near_sites
 
-    def find_by_site_id(self, site_id) -> EvacuationSite:
+    def find_by_site_id(self, site_id) -> list:
         """
         避難場所連番から該当する避難場所データを返す。
 
@@ -174,7 +174,7 @@ class EvacuationSiteService:
             site_id (int): 避難場所連番
 
         Returns
-            evacuation_site (obj:`EvacuationSite`): 避難場所データ
+            evacuation_site (list of obj:`EvacuationSite`): 避難場所データ
 
         """
         state = (
@@ -182,7 +182,7 @@ class EvacuationSiteService:
             + "longitude FROM evacuation_sites WHERE site_id=%s;"
         )
         self.__db.execute(state, (str(site_id),))
-        return self._fetch(self.__db.fetchall())[0]
+        return self._fetch(self.__db.fetchall())
 
     def get_area_names(self) -> list:
         """

@@ -106,16 +106,21 @@ def site(site_id):
         site_id = int(site_id)
     except ValueError:
         title = "検索条件に誤りがあります"
-        error_message = "URLが正しくありません。"
+        error_message = "避難場所の連番が正しくありません。"
         return render_template("error.html", title=title, error_message=error_message)
 
     service = EvacuationSiteService(get_db())
     result = service.find_by_site_id(site_id)
-    title = "避難場所「" + result.site_name + "」の情報"
+    if len(result) == 0:
+        title = "検索条件に誤りがあります"
+        error_message = "そのような避難場所連番はありません。"
+        return render_template("error.html", title=title, error_message=error_message)
+
+    title = "避難場所「" + result[0].site_name + "」の情報"
     return render_template(
         "site.html",
         title=title,
-        result=result,
+        result=result[0],
     )
 
 
@@ -124,6 +129,11 @@ def area(area_name):
     area_name = escape(area_name)
     service = EvacuationSiteService(get_db())
     search_results = service.find_by_area_name(area_name)
+    if len(search_results) == 0:
+        title = "検索条件に誤りがあります"
+        error_message = "そのような住所の避難場所はありません。"
+        return render_template("error.html", title=title, error_message=error_message)
+
     title = "「" + area_name + "」の避難場所"
     return render_template(
         "area.html",

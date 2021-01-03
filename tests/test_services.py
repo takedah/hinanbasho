@@ -134,9 +134,8 @@ class TestEvacuationSiteService(unittest.TestCase):
         self.assertEqual(near_sites[-1]["distance"], 4)
 
     def test_find_by_site_id(self):
-        self.assertEqual(
-            self.service.find_by_site_id(3).site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)"
-        )
+        site = self.service.find_by_site_id(3)
+        self.assertEqual(site[0].site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)")
 
     def test_get_area_names(self):
         expect = ["花咲町", "常磐公園", "神楽３条", "神居町忠和", "東光２１条", "緑町"]
