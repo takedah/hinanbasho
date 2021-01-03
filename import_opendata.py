@@ -16,6 +16,7 @@ def import_opendata():
     db = DB()
     try:
         service = EvacuationSiteService(db)
+        service.truncate()
         for evacuation_site in factory.items:
             service.create(evacuation_site)
         db.commit()
