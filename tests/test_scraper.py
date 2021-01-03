@@ -64,19 +64,19 @@ class TestPostOfficeCSV(unittest.TestCase):
         # 先頭行
         expect = {
             "postal_code": "0600000",
-            "area_address": "以下に掲載がない場合",
+            "area_name": "以下に掲載がない場合",
         }
         self.assertEqual(post_office_csv.lists[0], expect)
         # 1382行目
         expect = {
             "postal_code": "0700055",
-            "area_address": "５条西",
+            "area_name": "５条西",
         }
         self.assertEqual(post_office_csv.lists[1382], expect)
         # 最終行
         expect = {
             "postal_code": "0861834",
-            "area_address": "礼文町",
+            "area_name": "礼文町",
         }
         self.assertEqual(post_office_csv.lists[-1], expect)
 

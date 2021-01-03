@@ -1,11 +1,13 @@
 import unittest
 from hinanbasho.errors import LocationError
+from hinanbasho.models import AreaAddress
+from hinanbasho.models import AreaAddressFactory
 from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
 
 
-test_data = [
+test_evacuation_site_data = [
     {
         "site_id": 1,
         "site_name": "常磐公園",
@@ -25,11 +27,17 @@ test_data = [
         "longitude": 142.3681739,
     },
 ]
+test_area_address_data = [
+    {
+        "postal_code": "0700044",
+        "area_name": "北海道旭川市常磐公園",
+    },
+]
 
 
 class TestEvacuationSite(unittest.TestCase):
     def setUp(self):
-        self.evacuation_site = EvacuationSite(**test_data[0])
+        self.evacuation_site = EvacuationSite(**test_evacuation_site_data[0])
 
     def test_site_id(self):
         self.assertEqual(self.evacuation_site.site_id, 1)
@@ -57,17 +65,17 @@ class TestEvacuationSiteFactory(unittest.TestCase):
     def test_create(self):
         factory = EvacuationSiteFactory()
         # EvacuationSiteクラスのオブジェクトが生成できるか確認する。
-        evacuation_site = factory.create(test_data[0])
+        evacuation_site = factory.create(test_evacuation_site_data[0])
         self.assertTrue(isinstance(evacuation_site, EvacuationSite))
 
 
 class TestCurrentLocation(unittest.TestCase):
     def setUp(self):
         factory = EvacuationSiteFactory()
-        factory.create(test_data[0])
+        factory.create(test_evacuation_site_data[0])
         self.evacuation_site = factory.items[0]
-        current_latitude = test_data[1]["latitude"]
-        current_longitude = test_data[1]["longitude"]
+        current_latitude = test_evacuation_site_data[1]["latitude"]
+        current_longitude = test_evacuation_site_data[1]["longitude"]
         self.current_location = CurrentLocation(
             latitude=current_latitude, longitude=current_longitude
         )
@@ -79,6 +87,25 @@ class TestCurrentLocation(unittest.TestCase):
     def test_init(self):
         with self.assertRaises(LocationError):
             CurrentLocation(latitude="hoge", longitude="fuga")
+
+
+class TestAreaAddress(unittest.TestCase):
+    def setUp(self):
+        self.area_address = AreaAddress(**test_area_address_data[0])
+
+    def test_postal_code(self):
+        self.assertEqual(self.area_address.postal_code, "070-0044")
+
+    def test_area_address(self):
+        self.assertEqual(self.area_address.area_name, "北海道旭川市常磐公園")
+
+
+class TestAreaAddressFactory(unittest.TestCase):
+    def test_create(self):
+        factory = AreaAddressFactory()
+        # AreaAddressクラスのオブジェクトが生成できるか確認する。
+        area_address = factory.create(test_area_address_data[0])
+        self.assertTrue(isinstance(area_address, AreaAddress))
 
 
 if __name__ == "__main__":

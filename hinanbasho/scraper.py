@@ -71,18 +71,18 @@ class PostOfficeCSV:
         data_length = len(df.values.tolist())
         tmp = {
             "postal_code": None,
-            "area_address": None,
+            "area_name": None,
         }
         duplicate_key = ""
         for row in df.values.tolist():
             postal_code = row[2]
-            area_address = row[8]
+            area_name = row[8]
             if i == 0:
                 # CSV先頭行
                 # 一つ前の行までのデータを一時的に保存するもの。
                 tmp = {
                     "postal_code": postal_code,
-                    "area_address": area_address,
+                    "area_name": area_name,
                 }
                 # 一つ前の行までのデータの郵便番号。
                 duplicate_key = postal_code
@@ -92,14 +92,14 @@ class PostOfficeCSV:
                 # 前の行と現在の行の郵便番号が同一かどうかで判断する。
                 if postal_code == duplicate_key:
                     # 町域が複数行に分かれている場合は町域を追記。
-                    tmp["area_address"] = tmp["area_address"] + area_address
+                    tmp["area_name"] = tmp["area_name"] + area_name
                 else:
                     # 町域が複数行に分かれていない場合に初めてデータを抽出。
                     self.__lists.append(tmp)
                     # 一時保存データを現在の行のデータで初期化する。
                     tmp = {
                         "postal_code": postal_code,
-                        "area_address": area_address,
+                        "area_name": area_name,
                     }
                     duplicate_key = postal_code
             else:
@@ -108,7 +108,7 @@ class PostOfficeCSV:
                 self.__lists.append(
                     {
                         "postal_code": postal_code,
-                        "area_address": area_address,
+                        "area_name": area_name,
                     }
                 )
 

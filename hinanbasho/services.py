@@ -5,6 +5,7 @@ from decimal import Decimal
 from decimal import ROUND_HALF_UP
 from hinanbasho.errors import DatabaseError
 from hinanbasho.errors import DataError
+from hinanbasho.models import AreaAddress
 from hinanbasho.models import CurrentLocation
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
@@ -14,6 +15,11 @@ class EvacuationSiteService:
     """避難場所サービス"""
 
     def __init__(self, db):
+        """
+        Args:
+            db (obj:`DB`): psycopg2のメソッドをラップしたメソッドを持つオブジェクト
+
+        """
         self.__db = db
         self.__table_name = "evacuation_sites"
 
@@ -180,3 +186,85 @@ class EvacuationSiteService:
         )
         self.__db.execute(state)
         return self._fetch(self.__db.fetchall())[0]
+
+
+class AreaAddressService:
+    """町域と郵便番号サービス"""
+
+    def __init__(self, db):
+        """
+        Args:
+            db (obj:`DB`): psycopg2のメソッドをラップしたメソッドを持つオブジェクト
+
+        """
+        self.__db = db
+        self.__table_name = "area_addresses"
+
+    def truncate(self) -> bool:
+        """町域と郵便番号テーブルのデータを全削除
+
+        Returns:
+            bool: データの登録が成功したら真を返す
+
+        """
+        state = "TRUNCATE TABLE " + self.__table_name + " RESTART IDENTITY;"
+        try:
+            self.__db.execute(state)
+            return True
+        except (DatabaseError, DataError):
+            return False
+
+    def create(self, area_address: AreaAddress) -> bool:
+        """データベースへ町域と郵便番号データを保存
+
+        Args:
+            area_address (obj:`AreaAddress`): 町域と郵便番号データのオブジェクト
+
+        Returns:
+            bool: データの登録が成功したら真を返す
+
+        """
+        items = [
+            "postal_code",
+            "area_name",
+            "updated_at",
+        ]
+
+        column_names = ""
+        place_holders = ""
+        upsert = ""
+        for item in items:
+            column_names += "," + item
+            place_holders += ",%s"
+            upsert += "," + item + "=%s"
+
+        state = (
+            "INSERT INTO"
+            + " "
+            + self.__table_name
+            + " "
+            + "("
+            + column_names[1:]
+            + ")"
+            + " "
+            + "VALUES ("
+            + place_holders[1:]
+            + ")"
+            + " "
+            "ON CONFLICT(postal_code)" + " "
+            "DO UPDATE SET" + " " + upsert[1:]
+        )
+
+        values = [
+            area_address.postal_code,
+            area_address.area_name,
+            datetime.now(timezone(timedelta(hours=+9))),
+        ]
+        # UPDATE句用に登録データ配列を重複させる
+        values += values
+
+        try:
+            self.__db.execute(state, values)
+            return True
+        except (DatabaseError, DataError):
+            return False

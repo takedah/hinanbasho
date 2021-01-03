@@ -1,12 +1,14 @@
 import unittest
 from hinanbasho.db import DB
 from hinanbasho.models import CurrentLocation
+from hinanbasho.models import AreaAddressFactory
 from hinanbasho.models import EvacuationSite
 from hinanbasho.models import EvacuationSiteFactory
+from hinanbasho.services import AreaAddressService
 from hinanbasho.services import EvacuationSiteService
 
 
-test_data = [
+test_evacuation_site_data = [
     {
         "site_id": 1,
         "site_name": "常磐公園",
@@ -62,13 +64,19 @@ test_data = [
         "longitude": 142.3164453,
     },
 ]
+test_area_address_data = [
+    {
+        "postal_code": "0700044",
+        "area_name": "北海道旭川市常磐公園",
+    },
+]
 
 
 class TestEvacuationSiteService(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.factory = EvacuationSiteFactory()
-        for d in test_data:
+        for d in test_evacuation_site_data:
             self.factory.create(d)
         self.db = DB()
         self.service = EvacuationSiteService(self.db)
@@ -109,6 +117,26 @@ class TestEvacuationSiteService(unittest.TestCase):
         self.assertEqual(
             self.service.find_by_site_id(3).site_name, "イオンモール旭川西店(3階駐車場及び屋上駐車場)"
         )
+
+
+class TestAreaAddressService(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        self.factory = AreaAddressFactory()
+        for d in test_area_address_data:
+            self.factory.create(d)
+        self.db = DB()
+        self.service = AreaAddressService(self.db)
+
+    @classmethod
+    def tearDownClass(self):
+        self.db.close()
+
+    def test_create(self):
+        self.service.truncate()
+        for item in self.factory.items:
+            self.assertTrue(self.service.create(item))
+        self.db.commit()
 
 
 if __name__ == "__main__":

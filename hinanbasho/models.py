@@ -161,3 +161,70 @@ class CurrentLocation(Point):
         return float(
             Decimal(str(distance)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         )
+
+
+class AreaAddress(Point):
+    """町域と郵便番号のデータモデル
+
+    Attributes:
+        postal_code (str): 郵便番号
+        area_name (str): 町域名
+
+    """
+
+    def __init__(self, **kwargs: dict):
+        """
+        Args:
+            **kwargs: 町域と郵便番号の情報を格納したディクショナリ
+
+        """
+        postal_code = str(kwargs["postal_code"])
+        postal_code = postal_code[:3] + "-" + postal_code[-4:]
+        self.__postal_code = postal_code
+        self.__area_name = str(kwargs["area_name"])
+
+    @property
+    def postal_code(self) -> str:
+        return self.__postal_code
+
+    @property
+    def area_name(self) -> str:
+        return self.__area_name
+
+
+class AreaAddressFactory(Factory):
+    """町域と郵便番号モデルを作成する。
+
+    Attributes:
+        items (list of :obj:`AreaAddress`): 町域と郵便番号オブジェクトのリスト
+
+    """
+
+    def __init__(self):
+        self.__items = list()
+
+    @property
+    def items(self) -> list:
+        return self.__items
+
+    def _create_item(self, row: dict) -> AreaAddress:
+        """町域と郵便番号オブジェクトを作成する。
+
+        Args:
+            row (dict): 町域と郵便番号情報を表すディクショナリ
+
+        """
+        return AreaAddress(**row)
+
+    def _register_item(self, item: AreaAddress) -> bool:
+        """町域と郵便番号オブジェクトをリストに追加。
+
+        Args:
+            item (:obj:`AreaAddress`): 町域と郵便番号オブジェクト
+
+        Returns:
+            bool: 成功したら真を返す
+
+        """
+        self.__items.append(item)
+        return True
