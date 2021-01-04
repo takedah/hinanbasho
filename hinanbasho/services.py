@@ -119,7 +119,7 @@ class EvacuationSiteService:
         return factory.items
 
     def get_all(self) -> list:
-        """条件に合致する避難場所データのリストを返す。
+        """避難場所全件データのリストを返す。
 
         Returns:
             sites (list of obj:`EvacuationSite`): 避難場所オブジェクト全件のリスト
@@ -222,6 +222,25 @@ class EvacuationSiteService:
             + "area_addresses.postal_code WHERE area_name=%s;"
         )
         self.__db.execute(state, (area_name,))
+        return self._fetch(self.__db.fetchall())
+
+    def find_by_site_name(self, site_name) -> list:
+        """
+        指定した避難場所名を含む避難場所を検索する。
+
+        Args:
+            site_name (int): 避難場所名（キーワード）
+
+        Returns
+            evacuation_site (list of obj:`EvacuationSite`): 避難場所データ
+
+        """
+        site_name = "%" + site_name + "%"
+        state = (
+            "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
+            + "longitude FROM evacuation_sites WHERE site_name LIKE %s;"
+        )
+        self.__db.execute(state, (site_name,))
         return self._fetch(self.__db.fetchall())
 
 

@@ -145,6 +145,10 @@ class TestEvacuationSiteService(unittest.TestCase):
         area_sites = self.service.find_by_area_name("花咲町")
         self.assertEqual(area_sites[0].site_name, "花咲スポーツ公園")
 
+    def test_find_by_site_name(self):
+        results = self.service.find_by_site_name("花咲")
+        self.assertEqual(results[0].site_name, "花咲スポーツ公園")
+
 
 class TestAreaAddressService(unittest.TestCase):
     @classmethod
