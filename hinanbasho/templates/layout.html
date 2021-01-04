@@ -16,7 +16,7 @@
                 <div class="navbar-nav">
                     <a class="navbar-brand text-white-50" href="/" title="トップページへ戻る">旭川市避難場所検索</a>
                 </div>
-                <div class="navbar-nav mr-auto">
+                <div class="navbar-nav ml-1">
                     <div class="dropdown show">
                         <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">住所一覧</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -25,14 +25,6 @@
                             {% endfor %}
                         </div>
                     </div>
-                </div>
-                <div class="navbar-nav">
-                    <form class="form-inline" action="/search_by_site_name" method="GET">
-                        <div>
-                            <input class="form-control" type="text" name="site_name" value="" placeholder="避難場所名を入力">
-                            <button type="submit" class="btn btn-primary">検索</button>
-                        </div>
-                    </form>
                 </div>
             </nav>
         </header>
