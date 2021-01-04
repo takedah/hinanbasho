@@ -2,25 +2,17 @@
 {% block content %}
 <div class="container mb-5">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <section>
                 <h1 class="h4 mb-3">旭川市避難場所検索</h1>
                 <p>旭川市ホームページの指定緊急避難場所オープンデータから、旭川市の指定緊急避難場所を検索できます。位置情報を使えば現在地から近い避難場所を探すこともできます。</p>
             </section>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
             <section>
                 <p id="gpsServiceStatus" class="none"></p>
             </section>
             <section id="nudge">
                 <p><button id="useGps" class="btn btn-primary">現在地の位置情報を取得</button></p>
             </section>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
             <section id="searchByGps">
                 <form action="./search_by_gps" method="POST">
                     <p>
@@ -30,17 +22,27 @@
                     </p>
                 </form>
             </section>
+            <section>
+                <blockquote class="mt-3">
+                    <dl>
+                        <dt>指定緊急避難場所とは</dt>
+                        <dd>災害が発生し、又は発生するおそれがある場合にその危険から逃れるための避難場所として、国で定める基準に従い、災害の種類ごとに安全性等の一定の基準を満たす施設又は場所をいいます。</dd>
+                    </dl>
+                    <cite><a href="http://www.city.asahikawa.hokkaido.jp/kurashi/320/321/d053843.html" title="旭川市ホームページ">避難所・避難場所について（旭川市ホームページ）</a></cite>
+                </blockquote>
+            </section>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <blockquote class="mt-3">
-                <dl>
-                    <dt>指定緊急避難場所とは</dt>
-                    <dd>災害が発生し、又は発生するおそれがある場合にその危険から逃れるための避難場所として、国で定める基準に従い、災害の種類ごとに安全性等の一定の基準を満たす施設又は場所をいいます。</dd>
-                </dl>
-                <cite><a href="http://www.city.asahikawa.hokkaido.jp/kurashi/320/321/d053843.html" title="旭川市ホームページ">避難所・避難場所について（旭川市ホームページ）</a></cite>
-            </blockquote>
+        <div class="col-md-4">
+            <section>
+                <div class="list-group">
+                    <h2 class="list-group-item h5">避難場所の住所から探す</h5>
+                    <ul class="pl-0">
+                    {% for area_name in area_names %}
+                    <li class="list-group-item list-group-item-action"><a href="/area/{{ area_name }}" title="{{ area_name }}の避難場所一覧へ">{{ area_name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </section>
         </div>
     </div>
 </div>

@@ -54,6 +54,13 @@ def get_db():
     return g.postgres_db
 
 
+def get_area_names():
+    if not hasattr(g, "area_names"):
+        service = EvacuationSiteService(get_db())
+        g.area_names = service.get_area_names()
+    return g.area_names
+
+
 @app.teardown_appcontext
 def close_db(error):
     if hasattr(g, "postgres_db"):
@@ -63,14 +70,14 @@ def close_db(error):
 @app.route("/")
 def index():
     title = "トップページ"
-    return render_template("index.html", title=title)
+    return render_template("index.html", title=title, area_names=get_area_names())
 
 
 @app.route("/search_by_gps", methods=["GET", "POST"])
 def search_by_gps():
     if request.method == "GET":
         title = "旭川市避難場所検索"
-        return render_template("index.html", title=title)
+        return render_template("index.html", title=title, area_names=get_area_names())
     else:
         title = "現在地から近い避難場所の検索結果"
         current_latitude = escape(request.form["current_latitude"])
@@ -85,7 +92,10 @@ def search_by_gps():
             title = "検索条件に誤りがあります"
             error_message = "緯度経度が正しくありません。"
             return render_template(
-                "error.html", title=title, error_message=error_message
+                "error.html",
+                title=title,
+                area_names=get_area_names(),
+                error_message=error_message,
             )
 
         service = EvacuationSiteService(get_db())
@@ -93,6 +103,7 @@ def search_by_gps():
         return render_template(
             "search_by_gps.html",
             title=title,
+            area_names=get_area_names(),
             search_results=near_sites,
             current_latitude=current_latitude,
             current_longitude=current_longitude,
@@ -107,19 +118,30 @@ def site(site_id):
     except ValueError:
         title = "検索条件に誤りがあります"
         error_message = "避難場所の連番が正しくありません。"
-        return render_template("error.html", title=title, error_message=error_message)
+        return render_template(
+            "error.html",
+            title=title,
+            area_names=get_area_names(),
+            error_message=error_message,
+        )
 
     service = EvacuationSiteService(get_db())
     result = service.find_by_site_id(site_id)
     if len(result) == 0:
         title = "検索条件に誤りがあります"
         error_message = "そのような避難場所連番はありません。"
-        return render_template("error.html", title=title, error_message=error_message)
+        return render_template(
+            "error.html",
+            title=title,
+            area_names=get_area_names(),
+            error_message=error_message,
+        )
 
     title = "避難場所「" + result[0].site_name + "」の情報"
     return render_template(
         "site.html",
         title=title,
+        area_names=get_area_names(),
         result=result[0],
     )
 
@@ -132,12 +154,18 @@ def area(area_name):
     if len(search_results) == 0:
         title = "検索条件に誤りがあります"
         error_message = "そのような住所の避難場所はありません。"
-        return render_template("error.html", title=title, error_message=error_message)
+        return render_template(
+            "error.html",
+            title=title,
+            area_names=get_area_names(),
+            error_message=error_message,
+        )
 
     title = "「" + area_name + "」の避難場所"
     return render_template(
         "area.html",
         title=title,
+        area_names=get_area_names(),
         area_name=area_name,
         search_results=search_results,
     )
@@ -146,7 +174,7 @@ def area(area_name):
 @app.errorhandler(404)
 def not_found(error):
     title = "404 Page Not Found."
-    return render_template("404.html", title=title)
+    return render_template("404.html", title=title, area_names=get_area_names())
 
 
 if __name__ == "__main__":

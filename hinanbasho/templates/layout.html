@@ -16,6 +16,16 @@
                 <div class="navbar-nav">
                     <a class="navbar-brand text-white-50" href="/" title="トップページへ戻る">旭川市避難場所検索</a>
                 </div>
+                <div class="navbar-nav mr-2">
+                    <div class="dropdown show">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">住所一覧</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            {% for area_name in area_names %}
+                            <a class="dropdown-item" href="/area/{{ area_name }}">{{ area_name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </nav>
         </header>
         <main>
