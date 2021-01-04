@@ -171,6 +171,23 @@ def area(area_name):
     )
 
 
+@app.route("/search_by_site_name")
+def search_by_site_name():
+    site_name = escape(request.args.get("site_name", None))
+    title = "名称に「" + site_name + "」を含むの避難場所の検索結果"
+    service = EvacuationSiteService(get_db())
+    search_results = service.find_by_site_name(site_name)
+    results_number = len(search_results)
+    return render_template(
+        "search_by_site_name.html",
+        title=title,
+        area_names=get_area_names(),
+        site_name=site_name,
+        search_results=search_results,
+        results_number=results_number,
+    )
+
+
 @app.errorhandler(404)
 def not_found(error):
     title = "404 Page Not Found."
