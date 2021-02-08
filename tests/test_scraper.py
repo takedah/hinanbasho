@@ -1,11 +1,9 @@
 import unittest
-from hinanbasho.scraper import OpenData
-from hinanbasho.scraper import PostOfficeCSV
-from requests import ConnectionError
-from requests import HTTPError
-from requests import RequestException
-from requests import Timeout
 from unittest.mock import Mock, patch
+
+from requests import ConnectionError, HTTPError, RequestException, Timeout
+
+from hinanbasho.scraper import OpenData, PostOfficeCSV
 
 
 class TestOpenData(unittest.TestCase):

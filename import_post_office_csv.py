@@ -1,8 +1,8 @@
 from hinanbasho.db import DB
 from hinanbasho.errors import DatabaseError, DataError
 from hinanbasho.models import AreaAddressFactory
-from hinanbasho.services import AreaAddressService
 from hinanbasho.scraper import PostOfficeCSV
+from hinanbasho.services import AreaAddressService
 
 
 def import_post_office_csv():

@@ -1,12 +1,13 @@
 import unittest
-from hinanbasho.db import DB
-from hinanbasho.models import CurrentLocation
-from hinanbasho.models import AreaAddressFactory
-from hinanbasho.models import EvacuationSite
-from hinanbasho.models import EvacuationSiteFactory
-from hinanbasho.services import AreaAddressService
-from hinanbasho.services import EvacuationSiteService
 
+from hinanbasho.db import DB
+from hinanbasho.models import (
+    AreaAddressFactory,
+    CurrentLocation,
+    EvacuationSite,
+    EvacuationSiteFactory
+)
+from hinanbasho.services import AreaAddressService, EvacuationSiteService
 
 test_evacuation_site_data = [
     {

@@ -1,8 +1,8 @@
 import psycopg2
 from psycopg2.extras import DictCursor
+
 from hinanbasho.config import Config
-from hinanbasho.errors import DatabaseError
-from hinanbasho.errors import DataError
+from hinanbasho.errors import DatabaseError, DataError
 
 
 class DB:

@@ -1,6 +1,7 @@
+from decimal import ROUND_HALF_UP, Decimal
+
 import numpy as np
-from decimal import Decimal
-from decimal import ROUND_HALF_UP
+
 from hinanbasho.errors import LocationError
 from hinanbasho.factory import Factory
 

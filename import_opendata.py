@@ -1,8 +1,8 @@
 from hinanbasho.db import DB
 from hinanbasho.errors import DatabaseError, DataError
 from hinanbasho.models import EvacuationSiteFactory
-from hinanbasho.services import EvacuationSiteService
 from hinanbasho.scraper import OpenData
+from hinanbasho.services import EvacuationSiteService
 
 
 def import_opendata():

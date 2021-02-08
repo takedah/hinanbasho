@@ -1,11 +1,13 @@
 import unittest
-from hinanbasho.errors import LocationError
-from hinanbasho.models import AreaAddress
-from hinanbasho.models import AreaAddressFactory
-from hinanbasho.models import CurrentLocation
-from hinanbasho.models import EvacuationSite
-from hinanbasho.models import EvacuationSiteFactory
 
+from hinanbasho.errors import LocationError
+from hinanbasho.models import (
+    AreaAddress,
+    AreaAddressFactory,
+    CurrentLocation,
+    EvacuationSite,
+    EvacuationSiteFactory
+)
 
 test_evacuation_site_data = [
     {

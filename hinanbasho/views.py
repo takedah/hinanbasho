@@ -1,15 +1,11 @@
-from flask import escape
-from flask import Flask
-from flask import g
-from flask import render_template
-from flask import request
-from flask import url_for
-from hinanbasho.db import DB
-from hinanbasho.models import CurrentLocation
-from hinanbasho.errors import LocationError
-from hinanbasho.services import EvacuationSiteService
 import os
 
+from flask import Flask, escape, g, render_template, request, url_for
+
+from hinanbasho.db import DB
+from hinanbasho.errors import LocationError
+from hinanbasho.models import CurrentLocation
+from hinanbasho.services import EvacuationSiteService
 
 app = Flask(__name__)
 
