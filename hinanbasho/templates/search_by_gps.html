@@ -14,9 +14,9 @@
                         <th>現在地からの距離</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="results" data-length="{{ results_length|tojson }}">
                     {% for result in search_results %}
-                    <tr id="order{{ result['order'] }}" data-latitude="{{ result['site'].latitude|tojson }}" data-longitude="{{ result['site'].longitude|tojson }}" data-pointname="{{ result['site'].site_name|safe }}">
+                    <tr id="order{{ result['order'] }}" data-latitude="{{ result['site'].latitude|tojson }}" data-longitude="{{ result['site'].longitude|tojson }}" data-name="{{ result['site'].site_name|safe }}">
                         <td>{{ result['order'] }}</td>
                         <td><a href="/site/{{ result['site'].site_id }}" title="{{ result['site'].site_name }}の詳細へ">{{ result['site'].site_name }}</a></td>
                         <td>{{ result['site'].address }}</td>

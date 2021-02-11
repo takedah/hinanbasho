@@ -98,6 +98,7 @@ def search_by_gps():
 
         service = EvacuationSiteService(get_db())
         near_sites = service.get_near_sites(current_location)
+        results_length = len(near_sites)
         return render_template(
             "search_by_gps.html",
             title=title,
@@ -105,6 +106,7 @@ def search_by_gps():
             search_results=near_sites,
             current_latitude=current_latitude,
             current_longitude=current_longitude,
+            results_length=results_length,
         )
 
 
