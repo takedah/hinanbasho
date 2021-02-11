@@ -1,38 +1,40 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container mb-5">
-    <div class="row">
-        <div class="col-md-8">
-            <section>
-                <h1 class="h4 mb-3">旭川市避難場所検索</h1>
-                <p>旭川市ホームページの指定緊急避難場所オープンデータから、旭川市の指定緊急避難場所を検索できます。位置情報を使えば現在地から近い避難場所を探すこともできます。</p>
-            </section>
-            <section>
-                <p id="gpsServiceStatus" class="none"></p>
-            </section>
-            <section id="nudge">
-                <p><button id="useGps" class="btn btn-primary">現在地の位置情報を取得</button></p>
-            </section>
-            <section id="searchByGps">
-                <form action="./search_by_gps" method="POST">
-                    <p>
-                        <input type="hidden" id="currentLatitude" name="current_latitude" value="">
-                        <input type="hidden" id="currentLongitude" name="current_longitude" value="">
-                        <button type="submit" id="sendCurrentLocation" class="btn btn-success">現在地から近い避難場所を検索</button>
-                    </p>
-                </form>
-            </section>
-            <section>
-                <p>または、</p>
-                <form class="form mb-4" action="/search_by_site_name" method="GET">
-                    <div class="form-group">
-                        <label class="h5 text-secondary" for="site_name">避難場所名を入力</label>
-                        <input class="form-control" type="text" name="site_name" value="" placeholder="例）花咲スポーツ公園">
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">避難場所名で検索</button>
-                    </div>
-                </form>
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <section>
+                    <h1 class="h4 mb-3">旭川市避難場所検索</h1>
+                    <p>旭川市ホームページの指定緊急避難場所オープンデータから、旭川市の指定緊急避難場所を検索できます。位置情報を使えば現在地から近い避難場所を探すこともできます。</p>
+                </section>
+                <section>
+                    <p id="gpsServiceStatus" class="none"></p>
+                </section>
+                <section id="nudge">
+                    <p><button id="useGps" class="btn btn-primary">現在地の位置情報を取得</button></p>
+                </section>
+                <section id="searchByGps">
+                    <form action="./search_by_gps" method="POST">
+                        <p>
+                            <input type="hidden" id="currentLatitude" name="current_latitude" value="">
+                            <input type="hidden" id="currentLongitude" name="current_longitude" value="">
+                            <button type="submit" id="sendCurrentLocation" class="btn btn-success">現在地から近い避難場所を検索</button>
+                        </p>
+                    </form>
+                </section>
+                <section>
+                    <p>または、</p>
+                    <form class="form mb-4" action="/search_by_site_name" method="GET">
+                        <div class="form-group">
+                            <label class="h5 text-secondary" for="site_name">避難場所名を入力</label>
+                            <input class="form-control" type="text" name="site_name" value="" placeholder="例）花咲スポーツ公園">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">避難場所名で検索</button>
+                        </div>
+                    </form>
+                </section>
                 <section>
                     <blockquote class="mt-3">
                         <dl>
@@ -42,20 +44,21 @@
                         <cite><a href="http://www.city.asahikawa.hokkaido.jp/kurashi/320/321/d053843.html" title="旭川市ホームページ">避難所・避難場所について（旭川市ホームページ）</a></cite>
                     </blockquote>
                 </section>
-        </div>
-        <div class="col-md-4">
-            <section>
-                <div class="list-group">
-                    <h2 class="list-group-item h5">避難場所の住所から探す</h5>
-                    <ul class="pl-0">
-                        {% for area_name in area_names %}
-                        <li class="list-group-item list-group-item-action"><a href="/area/{{ area_name }}" title="{{ area_name }}の避難場所一覧へ">{{ area_name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </section>
+            </div>
+            <div class="col-md-4">
+                <section>
+                    <div class="list-group">
+                        <h2 class="list-group-item h5">避難場所の住所から探す</h5>
+                        <ul class="pl-0">
+                            {% for area_name in area_names %}
+                            <li class="list-group-item list-group-item-action"><a href="/area/{{ area_name }}" title="{{ area_name }}の避難場所一覧へ">{{ area_name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </section>
+            </div>
         </div>
     </div>
-</div>
+</article>
 <script charset="utf-8" src="{{ url_for('static', filename='js/get_location.js') }}"></script>
 {% endblock %}

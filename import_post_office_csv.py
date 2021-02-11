@@ -11,7 +11,7 @@ def import_post_office_csv():
     post_office_csv = PostOfficeCSV()
     factory = AreaAddressFactory()
     for row in post_office_csv.lists:
-        factory.create(row)
+        factory.create(**row)
 
     db = DB()
     try:

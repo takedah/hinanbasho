@@ -14,11 +14,13 @@ app = Flask(__name__)
 def add_security_headers(response):
     response.headers.add(
         "Content-Security-Policy",
-        "default-src 'self'; \
-                    style-src 'self' stackpath.bootstrapcdn.com unpkg.com; \
+        "default-src 'self'; style-src 'self' 'unsafe-inline' \
+                    stackpath.bootstrapcdn.com unpkg.com kit.fontawesome.com; \
                     script-src 'self' code.jquery.com cdnjs.cloudflare.com \
-                    stackpath.bootstrapcdn.com unpkg.com; \
-                    img-src 'self' *.tile.openstreetmap.org unpkg.com data:;",
+                    stackpath.bootstrapcdn.com unpkg.com kit.fontawesome.com; \
+                    img-src 'self' *.tile.openstreetmap.org unpkg.com data:; \
+                    connect-src ka-f.fontawesome.com; \
+                    font-src ka-f.fontawesome.com;",
     )
     response.headers.add("X-Content-Type-Options", "nosniff")
     response.headers.add("X-Frame-Options", "DENY")
@@ -147,7 +149,8 @@ def area(area_name):
     area_name = escape(area_name)
     service = EvacuationSiteService(get_db())
     search_results = service.find_by_area_name(area_name)
-    if len(search_results) == 0:
+    results_length = len(search_results)
+    if results_length == 0:
         title = "検索条件に誤りがあります"
         error_message = "そのような住所の避難場所はありません。"
         return render_template(
@@ -164,6 +167,7 @@ def area(area_name):
         area_names=get_area_names(),
         area_name=area_name,
         search_results=search_results,
+        results_length=results_length,
     )
 
 

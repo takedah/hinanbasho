@@ -1,14 +1,11 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container mb-5">
-    <div class="row">
-        <div class="col-md-12">
-            <section>
-                <h1 class="h4">検索条件に誤りがあります</h1>
-                <p class="alert alert-warning">{{ error_message }}</p>
-                <p><a href="/" title="旭川市避難場所検索">トップページへ戻る</a>
-            </section>
-        </div>
+<article>
+    <div class="container">
+        <section>
+            <h1 class="h4 mb-3">検索条件に誤りがあります</h1>
+            <p class="alert alert-warning">{{ error_message }}</p>
+        </section>
     </div>
-</div>
+</article>
 {% endblock %}

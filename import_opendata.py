@@ -11,7 +11,7 @@ def import_opendata():
     open_data = OpenData()
     factory = EvacuationSiteFactory()
     for row in open_data.lists:
-        factory.create(row)
+        factory.create(**row)
 
     db = DB()
     try:

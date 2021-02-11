@@ -1,52 +1,42 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="container mb-5">
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="h4 mb-3">避難場所「{{ result.site_name }}」の情報</h3>
-            <p class="alert alert-success">旭川市ホームページのオープンデータから取得した避難場所の情報を表示しています。</p>
-            <section>
-                <table class="table table-striped table-bordered table-hover">
-                    <tbody>
-                        <tr>
-                            <th>名称</th>
-                            <td>{{ result.site_name }}</td>
-                        </tr>
-                        <tr>
-                            <th>郵便番号</th>
-                            <td>{{ result.postal_code }}</td>
-                        </tr>
-                        <tr>
-                            <th>住所</th>
-                            <td>{{ result.address }}</td>
-                        </tr>
-                        <tr>
-                            <th>電話番号</th>
-                            <td>{{ result.phone_number }}</td>
-                        </tr>
-                        <tr>
-                            <th>緯度（北緯）</th>
-                            <td>{{ result.latitude }}</td>
-                        </tr>
-                        <tr>
-                            <th>経度（東経）</th>
-                            <td>{{ result.longitude }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section>
-                <div id="mapid" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-pointname="{{ result.site_name|safe }}" class="mb-3"></div>
-            </section>
-        </div>
-        <div class="col-md-4">
-            <section>
-                <h2 class="h5">Googleマップで避難場所までの経路を探す</h2>
-                <p>以下のリンクからGoogleマップで{{ result.site_name }}までの経路を検索できます。（外部サイトへ移動）</p>
-                <p><a href="https://www.google.com/maps/search/?api=1&query={{ result.latitude }},{{ result.longitude }}" class="btn btn-success" title="Googleマップで開く">Googleマップで経路を探す</a></p>
-            </section>
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="h4 mb-3">避難場所「{{ result.site_name }}」の情報</h3>
+                <p class="alert alert-success">旭川市ホームページのオープンデータから取得した避難場所の情報を表示しています。</p>
+                <section>
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody id="results" data-length="1">
+                            <tr id="order1" data-latitude="{{ result.latitude|tojson }}" data-longitude="{{ result.longitude|tojson }}" data-name="{{ result.site_name|safe }}">
+                                <th>名称</th>
+                                <td>{{ result.site_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>住所</th>
+                                <td>{{ result.address }}</td>
+                            </tr>
+                            <tr>
+                                <th>電話番号</th>
+                                <td>{{ result.phone_number }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section>
+                    <div id="mapid" class="mb-3"></div>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section>
+                    <h2 class="h5">Googleマップで避難場所までの経路を探す</h2>
+                    <p>以下のリンクからGoogleマップで{{ result.site_name }}までの経路を検索できます。（外部サイトへ移動）</p>
+                    <p><a href="https://www.google.com/maps/search/?api=1&query={{ result.latitude }},{{ result.longitude }}" class="btn btn-primary" title="Googleマップで開く">Googleマップで経路を探す</a></p>
+                </section>
+            </div>
         </div>
     </div>
-</div>
+</article>
 <script charset="utf-8" src="{{ url_for('static', filename='js/show_map.js') }}"></script>
 {% endblock %}
