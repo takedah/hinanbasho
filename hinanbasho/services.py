@@ -1,40 +1,130 @@
 from datetime import datetime, timedelta, timezone
 from decimal import ROUND_HALF_UP, Decimal
 
+import psycopg2
+from psycopg2.extras import DictCursor
+
+from hinanbasho.db import DB
 from hinanbasho.errors import DatabaseError, DataError
+from hinanbasho.logs import Log
 from hinanbasho.models import (
     AreaAddress,
+    AreaAddressFactory,
     CurrentLocation,
     EvacuationSite,
     EvacuationSiteFactory
 )
 
 
-class EvacuationSiteService:
+class Service:
+    """データベース接続などの共通処理をまとめたクラス
+
+    Attributes:
+        cursor (:obj:`DictCursor`): psycopg2.extrasのDictCursorオブジェクト
+        table_name (str): テーブル名
+
+    """
+
+    def __init__(self, db: DB, table_name: str):
+        """
+        Args:
+            db (obj:`DB`): psycopg2.extrasのDictCursorオブジェクトを返すメソッドをラップしたメソッドを持つオブジェクト
+            table_name (str): テーブル名
+
+        """
+        self.__cursor = db.cursor()
+        self.__table_name = table_name
+        self.__logger = Log()
+
+    @property
+    def cursor(self) -> DictCursor:
+        return self.__cursor
+
+    @property
+    def table_name(self) -> str:
+        return self.__table_name
+
+    def execute(self, sql: str, parameters: tuple = None) -> bool:
+        """cursorオブジェクトのexecuteメソッドのラッパー。
+
+        Args:
+            sql (str): SQL文
+            parameters (tuple): SQLにプレースホルダを使用する場合の値を格納したリスト
+
+        Returns:
+            bool: 成功したら真を返す。
+
+        """
+        try:
+            if parameters:
+                self.cursor.execute(sql, parameters)
+            else:
+                self.cursor.execute(sql)
+            return True
+        except (
+            psycopg2.DataError,
+            psycopg2.IntegrityError,
+            psycopg2.InternalError,
+        ) as e:
+            raise DataError(e.args[0])
+
+    def truncate(self) -> None:
+        """テーブルのデータを全削除"""
+        state = "TRUNCATE TABLE " + self.table_name + " RESTART IDENTITY;"
+        self.execute(state)
+        self.info_log(self.table_name + "テーブルを初期化しました。")
+
+    def fetchall(self) -> list:
+        """cursorオブジェクトのfetchallメソッドのラッパー。
+
+        Returns:
+            results (list of :obj:`DictCursor`): 検索結果のリスト
+
+        """
+        return self.cursor.fetchall()
+
+    def info_log(self, message) -> None:
+        """AppLogオブジェクトのinfoメソッドのラッパー。
+
+        Args:
+            message (str): 通常のログメッセージ
+        """
+        return self.__logger.info(message)
+
+    def error_log(self, message) -> None:
+        """AppLogオブジェクトのerrorメソッドのラッパー。
+
+        Args:
+            message (str): エラーログメッセージ
+
+        """
+        return self.__logger.error(message)
+
+
+class EvacuationSiteService(Service):
     """避難場所サービス"""
 
     def __init__(self, db):
         """
         Args:
-            db (obj:`DB`): psycopg2のメソッドをラップしたメソッドを持つオブジェクト
+            db (obj:`DB`): psycopg2.extrasのDictCursorオブジェクトを返すメソッドをラップしたメソッドを持つオブジェクト
 
         """
-        self.__db = db
-        self.__table_name = "evacuation_sites"
+        Service.__init__(self, db=db, table_name="evacuation_sites")
 
-    def truncate(self) -> bool:
-        """避難場所テーブルのデータを全削除
+    def _get_objects(self) -> list:
+        """検索結果から避難場所データのリストを作成する。
 
         Returns:
-            bool: データの登録が成功したら真を返す
+            sites (list of obj:`EvacuationSite`): 検索結果の避難場所
+                オブジェクトのリスト
 
         """
-        state = "TRUNCATE TABLE " + self.__table_name + " RESTART IDENTITY;"
-        try:
-            self.__db.execute(state)
-            return True
-        except (DatabaseError, DataError):
-            return False
+        results = self.fetchall()
+        factory = EvacuationSiteFactory()
+        for row in results:
+            factory.create(**row)
+        return factory.items
 
     def create(self, evacuation_site: EvacuationSite) -> bool:
         """データベースへ避難場所データを保存
@@ -68,7 +158,7 @@ class EvacuationSiteService:
         state = (
             "INSERT INTO"
             + " "
-            + self.__table_name
+            + self.table_name
             + " "
             + "("
             + column_names[1:]
@@ -82,7 +172,7 @@ class EvacuationSiteService:
             "DO UPDATE SET" + " " + upsert[1:]
         )
 
-        values = [
+        temp_values = [
             evacuation_site.site_id,
             evacuation_site.site_name,
             evacuation_site.postal_code,
@@ -93,29 +183,14 @@ class EvacuationSiteService:
             datetime.now(timezone(timedelta(hours=+9))),
         ]
         # UPDATE句用に登録データ配列を重複させる
-        values += values
+        values = tuple(temp_values + temp_values)
 
         try:
-            self.__db.execute(state, values)
+            self.execute(state, values)
             return True
-        except (DatabaseError, DataError):
+        except (DatabaseError, DataError) as e:
+            self.error_log(e.message)
             return False
-
-    def _fetch(self, dict_cursor) -> list:
-        """
-        psycopg2.extras.DictCursorオブジェクトから避難場所データのリストを作成する。
-
-        Args:
-            dict_cursor (obj:`psycopg2.extras.DictCursor`): 検索結果のイテレータ
-
-        Returns:
-            sites (list of obj:`EvacuationSite`): 検索結果の避難場所オブジェクトのリスト
-
-        """
-        factory = EvacuationSiteFactory()
-        for row in dict_cursor:
-            factory.create(row)
-        return factory.items
 
     def get_all(self) -> list:
         """避難場所全件データのリストを返す。
@@ -128,8 +203,8 @@ class EvacuationSiteService:
             "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
             + "longitude FROM evacuation_sites ORDER BY site_id;"
         )
-        self.__db.execute(state)
-        return self._fetch(self.__db.fetchall())
+        self.execute(state)
+        return self._get_objects()
 
     def get_near_sites(self, current_location: CurrentLocation) -> list:
         """
@@ -180,8 +255,8 @@ class EvacuationSiteService:
             "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
             + "longitude FROM evacuation_sites WHERE site_id=%s;"
         )
-        self.__db.execute(state, (str(site_id),))
-        return self._fetch(self.__db.fetchall())
+        self.execute(state, (str(site_id),))
+        return self._get_objects()
 
     def get_area_names(self) -> list:
         """
@@ -197,8 +272,8 @@ class EvacuationSiteService:
             + "area_addresses.postal_code;"
         )
         area_names = list()
-        self.__db.execute(state)
-        for row in self.__db.fetchall():
+        self.execute(state)
+        for row in self.fetchall():
             area_names.append(row["area_name"])
         return area_names
 
@@ -216,12 +291,12 @@ class EvacuationSiteService:
         """
         state = (
             "SELECT site_id,site_name,evacuation_sites.postal_code,address,"
-            + "phone_number,latitude,longitude,area_name FROM evacuation_sites "
+            + "phone_number,latitude,longitude FROM evacuation_sites "
             + "LEFT JOIN area_addresses ON evacuation_sites.postal_code="
             + "area_addresses.postal_code WHERE area_name=%s;"
         )
-        self.__db.execute(state, (area_name,))
-        return self._fetch(self.__db.fetchall())
+        self.execute(state, (area_name,))
+        return self._get_objects()
 
     def find_by_site_name(self, site_name) -> list:
         """
@@ -239,11 +314,11 @@ class EvacuationSiteService:
             "SELECT site_id,site_name,postal_code,address,phone_number,latitude,"
             + "longitude FROM evacuation_sites WHERE site_name LIKE %s;"
         )
-        self.__db.execute(state, (site_name,))
-        return self._fetch(self.__db.fetchall())
+        self.execute(state, (site_name,))
+        return self._get_objects()
 
 
-class AreaAddressService:
+class AreaAddressService(Service):
     """町域と郵便番号サービス"""
 
     def __init__(self, db):
@@ -252,22 +327,21 @@ class AreaAddressService:
             db (obj:`DB`): psycopg2のメソッドをラップしたメソッドを持つオブジェクト
 
         """
-        self.__db = db
-        self.__table_name = "area_addresses"
+        Service.__init__(self, db=db, table_name="area_addresses")
 
-    def truncate(self) -> bool:
-        """町域と郵便番号テーブルのデータを全削除
+    def _get_objects(self) -> list:
+        """検索結果から町域と郵便番号データのリストを作成する。
 
         Returns:
-            bool: データの登録が成功したら真を返す
+            sites (list of obj:`AreaAddress`): 検索結果の町域と郵便番号
+                オブジェクトのリスト
 
         """
-        state = "TRUNCATE TABLE " + self.__table_name + " RESTART IDENTITY;"
-        try:
-            self.__db.execute(state)
-            return True
-        except (DatabaseError, DataError):
-            return False
+        results = self._fetchall()
+        factory = AreaAddressFactory()
+        for row in results:
+            factory.create(**row)
+        return factory.items
 
     def create(self, area_address: AreaAddress) -> bool:
         """データベースへ町域と郵便番号データを保存
@@ -296,7 +370,7 @@ class AreaAddressService:
         state = (
             "INSERT INTO"
             + " "
-            + self.__table_name
+            + self.table_name
             + " "
             + "("
             + column_names[1:]
@@ -319,7 +393,7 @@ class AreaAddressService:
         values += values
 
         try:
-            self.__db.execute(state, values)
+            self.execute(state, values)
             return True
         except (DatabaseError, DataError):
             return False

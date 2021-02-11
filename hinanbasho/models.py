@@ -52,18 +52,33 @@ class EvacuationSite(Point):
 
     """
 
-    def __init__(self, **kwargs: dict):
+    def __init__(
+        self,
+        site_id: int,
+        site_name: str,
+        postal_code: str,
+        address: str,
+        phone_number: str,
+        latitude: float,
+        longitude: float,
+    ):
         """
         Args:
-            **kwargs: 避難場所の情報を格納したディクショナリ
+            site_id (int): 連番
+            site_name (str): 避難場所名
+            postal_code (str): 避難場所の郵便番号
+            address (str): 避難場所の住所
+            phone_number (str): 避難場所の電話番号
+            latitude (float): 避難場所の緯度
+            longitude (float): 避難場所の経度
 
         """
-        self.__site_id = int(kwargs["site_id"])
-        self.__site_name = str(kwargs["site_name"])
-        self.__postal_code = str(kwargs["postal_code"])
-        self.__address = str(kwargs["address"])
-        self.__phone_number = str(kwargs["phone_number"])
-        Point.__init__(self, float(kwargs["latitude"]), float(kwargs["longitude"]))
+        self.__site_id = int(site_id)
+        self.__site_name = str(site_name)
+        self.__postal_code = str(postal_code)
+        self.__address = str(address)
+        self.__phone_number = str(phone_number)
+        Point.__init__(self, float(latitude), float(longitude))
 
     @property
     def site_id(self) -> int:
@@ -101,7 +116,7 @@ class EvacuationSiteFactory(Factory):
     def items(self) -> list:
         return self.__items
 
-    def _create_item(self, row: dict) -> EvacuationSite:
+    def _create_item(self, **row: dict) -> EvacuationSite:
         """避難場所オブジェクトを作成する。
 
         Args:
@@ -110,7 +125,7 @@ class EvacuationSiteFactory(Factory):
         """
         return EvacuationSite(**row)
 
-    def _register_item(self, item: EvacuationSite) -> bool:
+    def _register_item(self, item: EvacuationSite) -> None:
         """避難場所オブジェクトをリストに追加。
 
         Args:
@@ -121,7 +136,6 @@ class EvacuationSiteFactory(Factory):
 
         """
         self.__items.append(item)
-        return True
 
 
 class CurrentLocation(Point):
@@ -164,7 +178,7 @@ class CurrentLocation(Point):
         )
 
 
-class AreaAddress(Point):
+class AreaAddress:
     """町域と郵便番号のデータモデル
 
     Attributes:
@@ -173,16 +187,21 @@ class AreaAddress(Point):
 
     """
 
-    def __init__(self, **kwargs: dict):
+    def __init__(
+        self,
+        postal_code: str,
+        area_name: str,
+    ):
         """
         Args:
-            **kwargs: 町域と郵便番号の情報を格納したディクショナリ
+            postal_code (str): 郵便番号
+            area_name (str): 町域名
 
         """
-        postal_code = str(kwargs["postal_code"])
+        postal_code = str(postal_code)
         postal_code = postal_code[:3] + "-" + postal_code[-4:]
         self.__postal_code = postal_code
-        self.__area_name = str(kwargs["area_name"])
+        self.__area_name = str(area_name)
 
     @property
     def postal_code(self) -> str:
@@ -208,7 +227,7 @@ class AreaAddressFactory(Factory):
     def items(self) -> list:
         return self.__items
 
-    def _create_item(self, row: dict) -> AreaAddress:
+    def _create_item(self, **row: dict) -> AreaAddress:
         """町域と郵便番号オブジェクトを作成する。
 
         Args:
@@ -217,7 +236,7 @@ class AreaAddressFactory(Factory):
         """
         return AreaAddress(**row)
 
-    def _register_item(self, item: AreaAddress) -> bool:
+    def _register_item(self, item: AreaAddress) -> None:
         """町域と郵便番号オブジェクトをリストに追加。
 
         Args:
@@ -228,4 +247,3 @@ class AreaAddressFactory(Factory):
 
         """
         self.__items.append(item)
-        return True

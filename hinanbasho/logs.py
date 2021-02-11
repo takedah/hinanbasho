@@ -1,53 +1,64 @@
 import logging
-from datetime import datetime
 
 
 class Log:
-    @staticmethod
-    def logging_time():
-        """ログに記録したい年月日表記で現在時刻を返す
-
-        Returns:
-            logging_time (str): 年月日表記文字列
-
-        """
-        return datetime.strftime(datetime.now(), "%Y/%m/%d %H:%M:%S")
-
-
-class DBLog(Log):
-    """データベースのエラーログ用"""
+    """ログをコンソールへ出力する"""
 
     def __init__(self):
-        logger = logging.getLogger("DBLog")
-        file_handler = logging.FileHandler("logs/db_log.txt")
-        for h in logger.handlers:
-            logger.removeHandler(h)
+        logger = logging.getLogger("afajycal_log")
+        logger.setLevel(logging.DEBUG)
+        if not logger.handlers == []:
+            for exist_handler in logger.handlers:
+                logger.removeHandler(exist_handler)
+        console_handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        console_handler.setFormatter(formatter)
         self.__logger = logger
-        self.__logger.addHandler(file_handler)
+        self.__logger.addHandler(console_handler)
 
-    def _log(self, level, msg) -> bool:
-        """logging.logger.logをラップしただけ
-
-        Args:
-            level (int): ログレベル
-            msg (str): メッセージ
-
-        Returns:
-            bool: ログに成功したら真を返す
-
-        """
-        self.__logger.log(level, msg)
-        return True
-
-    def error_log(self, msg) -> bool:
-        """エラーログ
+    def debug(self, message) -> None:
+        """logging.debugのラッパー
 
         Args:
-            msg (str): エラーメッセージ
-
-        Returns:
-            bool: ログに成功したら真を返す
+            message (str): デバッグログメッセージ
 
         """
-        log_msg = self.logging_time() + "," + '"' + msg + '"'
-        self._log(30, log_msg)
+        return self.__logger.debug(message)
+
+    def info(self, message) -> None:
+        """logging.infoのラッパー
+
+        Args:
+            message (str): 通常のログメッセージ
+
+        """
+        return self.__logger.info(message)
+
+    def warning(self, message) -> None:
+        """logging.warningのラッパー
+
+        Args:
+            message (str): 警告ログメッセージ
+
+        """
+        return self.__logger.warning(message)
+
+    def error(self, message) -> None:
+        """logging.errorのラッパー
+
+        Args:
+            message (str): エラーログメッセージ
+
+        """
+        return self.__logger.error(message)
+
+    def critical(self, message) -> None:
+        """logging.criticalのラッパー
+
+        Args:
+            message (str): 重大なエラーログメッセージ
+
+        """
+        return self.__logger.critical(message)

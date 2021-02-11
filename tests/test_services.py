@@ -97,8 +97,8 @@ class TestEvacuationSiteService(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.factory = EvacuationSiteFactory()
-        for d in test_evacuation_site_data:
-            self.factory.create(d)
+        for row in test_evacuation_site_data:
+            self.factory.create(**row)
         self.db = DB()
         self.service = EvacuationSiteService(self.db)
         self.current_location = CurrentLocation(
@@ -155,8 +155,8 @@ class TestAreaAddressService(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.factory = AreaAddressFactory()
-        for d in test_area_address_data:
-            self.factory.create(d)
+        for row in test_area_address_data:
+            self.factory.create(**row)
         self.db = DB()
         self.service = AreaAddressService(self.db)
 
